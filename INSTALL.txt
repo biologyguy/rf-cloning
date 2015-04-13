@@ -1,0 +1,14 @@
+This install guide assumes you already have a functional Apache2 web server configured to execute PHP and cgi programs (.cgi, .pl, .pm, and .exe), with an associated MySQL database. For assistance installing your own web server, please refer to www.wampserver.com (Windows), https://discussions.apple.com/docs/DOC-3083 (MacOSX), or the appropriate documentation for your particular Linux distribution (searching for 'LAMP' + your distribution is a good start). Any further concerns or difficulties can be addressed to Steve Bond, biologyguy@gmail.com.    
+
+1 - Place the 'rf-cloning' folder into your web root directory
+2 - Create a MySQL database called rf-cloning, and execute the MySQL code provided in rf-cloning.sql 
+
+	shell> cd path/to/decompress_dir/
+	shell> mysql -u root -p
+	mysql> CREATE DATABASE `rf-cloning`
+	mysql> USE `rf-cloning`
+	mysql> SOURCE rf-cloning.sql
+	
+3 - Modify rf-cloning/includes/db_connect.php with the appropriate mysql login information
+4 - Copy the contents of the cgi-bin folder to your local cgi-bin (ie DO NOT nest the directories like this -> cgi-bin/cgi-bin/)
+5 - Cross your fingers and fire up your web browser!

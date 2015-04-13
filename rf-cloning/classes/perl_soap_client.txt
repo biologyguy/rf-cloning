@@ -1,0 +1,76 @@
+#!/usr/bin/perl -wT
+
+#*************************************************************************************************#
+# RF-Cloning SOAP Client
+# This code is intended to assist in the creation of SOAP requests to http://www.rf-cloning.org.
+# The WSDL file can be accessed at http://www.rf-cloning.com/classes/rf_cloning.wsdl
+#
+# Copyright (C) 2009-2014 Steve Bond
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as published by
+# the Free Software Foundation <http://www.gnu.org/licenses/>
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#*************************************************************************************************#
+
+use CGI qw(:standard);
+use CGI::Carp qw( fatalsToBrowser );
+use strict;
+use SOAP::Lite;
+use HTTP::Cookies;
+use JSON;
+
+use constant RF_CLONING_XML_NAMESPACE => "http://www.rf-cloning.org/classes";
+use constant RF_CLONING_PROXY => "http://www.rf-cloning.org/classes/rf_cloning_server.php";
+
+print "Content-type: text/html\n\n";
+my $json = JSON->new->utf8;
+my $soap = new SOAP::Lite
+    -> readable(1)
+    -> uri(RF_CLONING_XML_NAMESPACE)
+    -> proxy(RF_CLONING_PROXY, cookie_jar => HTTP::Cookies->new( ignore_discard => 1 ));
+
+########  Set parameters to be passed to RF-Cloning  ########
+my $plasmid_seq = 'ATATGAGTAGTGATATGACATGATGCTAGATGCTAGTAGCTAGCTAGCTGATCGTAGCTGTAGCTAGCTGATCGATGCTGATGCTAGCTAGTGATCGAC';
+my $insert_seq = 'TGATGC';
+my $insert_sites = '10-11';
+my $plas_target_tm = 60;
+my $ins_target_tm = 55;
+my $plas_min_size = 20;
+my $ins_min_size = 15;
+my $plas_max_size = 35;
+my $ins_max_size = 25;
+##############################################################
+
+my $payload = SOAP::Data->value(
+				SOAP::Data->name('plasmid_seq' => $plasmid_seq),
+				SOAP::Data->name('insert_seq' => $insert_seq),
+				SOAP::Data->name('insert_sites' => $insert_sites),
+				SOAP::Data->name('plas_target_tm' => $plas_target_tm),
+				SOAP::Data->name('ins_target_tm' => $ins_target_tm),
+				SOAP::Data->name('plas_min_size' => $plas_min_size),
+				SOAP::Data->name('ins_min_size' => $ins_min_size),
+				SOAP::Data->name('plas_max_size' => $plas_max_size),
+				SOAP::Data->name('ins_max_size' => $ins_max_size),
+							)->uri(RF_CLONING_XML_NAMESPACE);
+
+#run the getPrimers function
+my $return_string = $soap->call(SOAP::Data->name('getPrimers')
+						 ->uri(RF_CLONING_XML_NAMESPACE)
+						 => $payload);
+
+#convert the returned json string to a hash 
+my %result = %{$json->decode($return_string->result)};
+
+#Do stuff with the results!
+#Returned keys: new_construct, fwd_primer_database, rev_primer_database, fwd_plas_tm, fwd_ins_tm, rev_plas_tm, rev_ins_tm, ng_of_plasmid, pmol_of_plasmid, ng_of_insert, pmol_of_insert, extension_time_mins, extension_time_secs, target_pcr_size, error
+print "<table><tr align='left'><th>Keys</th><th>Values</th></tr>";
+while (my ($key, $value) = each %result) 
+	{
+    print "<tr><td>$key</td><td>$value</td></tr>";
+	}
+print "</table>";

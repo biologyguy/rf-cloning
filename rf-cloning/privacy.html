@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Privacy Policy</title>
+<link rel="stylesheet" href="includes/styles.css" />
+<script src="classes/ajaxObj.js" language="javascript" type="text/javascript"></script>
+<script src="javascript/javascripts.js" language="javascript" type="text/javascript"></script>
+<script language="javascript" type="text/javascript">
+var $email = new ajaxObject("functions/ajax/email.php",get_email)
+function get_email(responseText, responseStatus)
+	{
+	if (responseStatus == 200)
+		{			
+		document.getElementById('email1').innerHTML = responseText + "email</a>";
+		}
+	}
+</script>
+</head>
+
+<body onload="$email.update('check=ok','POST');">
+<p>This privacy statement provides information about the personal information that is collected by www.rf-cloning.org and www.rf-cloning.com (further referred to as rf-cloning), and the ways in which that personal information may be used.</p>
+
+<p><u>Personal information collection</u></p>
+
+<p>The following kinds of personal information may be collected and used:</p> 
+<ul>
+<li>Information that you provide for the purpose of registering with the website (including name and email address) </li>
+<li>Information that you provide for the purpose of subscribing to the website services (including mailing list)</li>
+<li>Any other information that you choose to send </li>
+</ul>
+
+<p><u>Using personal information</u></p>
+
+Your personal information may be used to: 
+<ul>
+<li>Administer this website</li>
+<li>Enable your access to, and use of, the website services</li>
+<li>Send to you information pertaining to your account</li>
+</ul>
+
+<p>Where your personal information is disclosed to agents or sub-contractors of rf-cloning for these purposes, the agent or sub-contractor in question will be obligated to use that personal information in accordance with the terms of this privacy statement.</p> 
+
+<p>In addition to the disclosures reasonably necessary for the purposes identified elsewhere above, rf-cloning may disclose your personal information to the extent that it is required to do so by law, in connection with any legal proceedings or prospective legal proceedings, and in order to establish, exercise or defend its legal rights.</p>
+
+<p><u>Securing your data</u></p>
+
+<p>rf-cloning will take reasonable technical and organizational precautions to prevent the loss, misuse or alteration of your personal information.</p> 
+
+<p>rf-cloning will store all the personal information you provide on their secure servers.</p> 
+
+<p>Once received by the rf-cloning servers, passwords are encrypted prior to storage in the database. As a consequence of this, passwords cannot be retrieved if lost.</p>
+
+<!--<p>In addition, personal information that you submit for publication in the forum will be published on the internet and may be available around the world. You agree to such cross-border transfers of personal information, and it is your responsibility to withhold personal information from the forum that you do not wish to be viewed by others.</p> -->
+
+<p><u>Updating this statement</u></p>
+
+<p>rf-cloning may update this privacy policy by posting a new version on this website. You should check this page occasionally to ensure you are familiar with any changes. </p> 
+
+<p><u>Other websites</u></p>
+
+<p>This website contains links to other websites. rf-cloning is not responsible for the privacy policies or practices of any third party.</p>
+
+<p>Contact Steve if you have any questions about this privacy policy or rf-cloning's treatment of your personal information,<br />
+by <span id="email1">email</span> or<br /> 
+by post to 7-3520 W. Broadway, Vancouver, BC, V6R 2B6.</p>
+
+<p><u>This privacy statement</u></p>
+
+<p>This privacy statement is based on a precedent created by employmentlawcontracts.co.uk and published by freenetlaw.com.</p>
+
+
+</body>
+</html>

@@ -1,0 +1,387 @@
+@charset "utf-8";
+/* CSS Document */
+/*************************************************************************************************#
+# www.rf-cloning.org
+#
+# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as published by
+# the Free Software Foundation <http://www.gnu.org/licenses/>
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#*************************************************************************************************/
+body
+	{
+	background:repeat-x url(../images/background.png);
+	font-family:Verdana, Geneva, sans-serif;
+	font-size:13px;
+	}
+	
+.add_base_fwd
+	{
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-image: url(../images/arrowhead_fwd_button.png);
+	border:none;
+	width:14px;
+	height:19px;
+	float:left;
+	}
+
+.add_base_fwd:hover
+	{
+	background-image: url(../images/arrowhead_fwd_button_hover.png);	
+	}
+
+.add_base_fwd:active
+	{
+	background-image: url(../images/arrowhead_fwd_button_click.png);	
+	}
+	
+.sub_base_fwd
+	{
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-image: url(../images/arrowhead_rev_button.png);
+	border:none;
+	width:14px;
+	height:19px;
+	margin-left:2px;
+	float:left;
+	}
+
+.sub_base_fwd:hover
+	{
+	background-image: url(../images/arrowhead_rev_button_hover.png);	
+	}
+
+.sub_base_fwd:active
+	{
+	background-image: url(../images/arrowhead_rev_button_click.png);	
+	}
+		
+.add_base_rev
+	{
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-image: url(../images/arrowhead_rev_button.png);
+	border:none;
+	width:14px;
+	height:19px;
+	float:left;
+	}
+
+.add_base_rev:hover
+	{
+	background-image: url(../images/arrowhead_rev_button_hover.png);	
+	}
+
+.add_base_rev:active
+	{
+	background-image: url(../images/arrowhead_rev_button_click.png);	
+	}
+	
+.sub_base_rev
+	{
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-image: url(../images/arrowhead_fwd_button.png);
+	border:none;
+	width:14px;
+	height:19px;
+	float:left;
+	}
+
+.sub_base_rev:hover
+	{
+	background-image: url(../images/arrowhead_fwd_button_hover.png);	
+	}
+
+.sub_base_rev:active
+	{
+	background-image: url(../images/arrowhead_fwd_button_click.png);	
+	}
+	
+#login_div
+	{
+	position:absolute;
+	left:400px;top:30px;	
+	}
+
+#right_column
+	{
+	position:absolute; 
+	left:600px;
+	top:30px;
+	}
+		
+#fwd_primer
+	{
+	}
+
+#rev_primer
+	{
+	}
+	
+#fwd_primer_div
+	{
+	}
+
+#rev_primer_div
+	{
+		
+	}
+	
+.primer
+	{
+	font-family:"Courier New", Courier, monospace;
+	font-size:15px;
+	width:425px;
+	word-wrap: break-word;
+	float:left;
+	text-align:left;
+	}
+
+.bp_control_buttons_left
+	{
+	width:35px;	
+	float:left;
+	vertical-align:middle;
+	}
+
+.bp_control_buttons_right
+	{
+	width:35px;	
+	float:right;
+	vertical-align:middle;
+	}
+	
+#left_body_column
+	{
+	width:580px;
+	text-align:left;
+	}
+	
+.tool_button
+	{	
+	height:15pt;
+	}
+
+.tool_button_left
+	{
+	vertical-align:middle;
+	}
+
+.tool_button img
+	{
+	vertical-align:top;	
+	}
+
+.tool_button span
+	{
+	background-image:url(../images/cutom_button/center_default.png);	
+	background-repeat:repeat-x;	
+	vertical-align:middle;
+	padding-top:1px;
+	font-size:10pt;
+	height:14pt;
+	display:inline-block;
+	}
+
+.tabs ul
+	{
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	float:right;
+	}
+	
+.tabs li
+	{
+	background:url(../images/tab_left.jpg) left top no-repeat;	
+	text-decoration: none;
+	float:left;
+	padding-left:4px;
+	margin:0;
+	background-position:left bottom;
+	}
+	
+.tabs a
+	{
+	background-image:url(../images/tab_middle.jpg);	
+	background-repeat:repeat-x;
+	height:29px;
+	font-size:10pt;
+	display:inline-block;
+	text-decoration: none;
+	color: black;	
+	}
+
+.tabs span
+	{
+	background:url(../images/tab_right.jpg) right top no-repeat;
+	text-decoration: none;	
+	height:29px;
+	padding-right:4px;
+	display:inline-block;
+	}	
+
+.insert_sites
+	{
+	margin-left:20px;	
+	}
+
+.indent
+	{
+	margin-left:20px;
+	}
+
+.note
+	{
+	font-size:10px;	
+	}
+	
+#new_construct
+	{
+	width:580px;
+	text-align:left;
+	}
+
+#insert_shift_alert
+	{
+	color:#C00; 
+	font-size:13px; 
+	font-weight:bold;
+	padding-left:120px;	
+	}
+
+#saved_alert
+	{
+	color:#C00; 
+	font-size:18px; 
+	font-weight:bold;
+	}
+
+#plasmid_map_display_box
+	{
+	position:absolute;
+	left:0px;
+	top:0px;
+	z-index:4;
+	}
+
+#features_display
+	{
+	position:absolute;
+	left:730px;
+	top:700px;
+	z-index:11;
+	padding:5px;
+	}
+	
+.numbers
+	{
+	font-family:"Times New Roman", Times, serif;
+	font-size:14px;	
+	}
+
+.plasmid_management_table
+	{
+		
+	}
+
+.plasmid_management_table tr
+	{
+		
+	}
+
+.plasmid_management_table td
+	{
+	padding:0px 0px 20px 0px;
+	text-align:left;
+	vertical-align:top;
+	}
+
+.plasmid_management_table th
+	{
+	text-align:left;
+	vertical-align:top;
+	}
+#primer_constraint 
+	{
+	width: 500px;
+	}
+
+.tm
+	{
+	color:#FF6400;
+	font-weight:700;
+	cursor:help;	
+	}
+
+.tm_box
+	{
+	border:solid thin black;
+	background-color:white;
+	padding:5px;		
+	}
+
+.shadow 
+	{
+	-moz-box-shadow: 3px 3px 4px #000;
+	-webkit-box-shadow: 3px 3px 4px #000;
+	box-shadow: 3px 3px 4px #000;
+	/* For IE 8 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000')";
+	}
+
+input.shadow
+	{
+	-moz-box-shadow: 1px 1px 2px #000;
+	-webkit-box-shadow: 1px 1px 2px #000;
+	box-shadow: 1px 1px 2px #000;
+	/* For IE 8 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000')";	
+	}
+
+.help
+	{
+	cursor:help;
+	position:relative;
+	z-index:1;	
+	}
+
+#help_overlay
+	{
+	position:absolute;
+	left:0;
+	top:0;
+	background:repeat url(../images/help_overlay.png);
+	z-index:2;	
+	}
+
+#help_text
+	{
+	position:absolute;
+	left:300px;
+	top:300px;
+	background:#FFF;
+	z-index:3;	
+	}
+
+#close_help
+	{
+	position:absolute;
+	left:600px;
+	top:290px;
+	z-index:6;	
+	}
+
+#advanced
+	{
+	cursor:pointer;		
+	}

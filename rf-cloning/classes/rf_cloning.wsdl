@@ -1,0 +1,67 @@
+<?xml version ='1.0' encoding ='UTF-8' ?>
+<!--*************************************************************************************************#
+# www.rf-cloning.org
+#
+# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as published by
+# the Free Software Foundation <http://www.gnu.org/licenses/>
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#*************************************************************************************************-->
+<definitions name='PrimerDesign'
+targetNamespace='http://www.rf-cloning.org/classes/rf_cloning.wdsl' 
+xmlns:tns='http://www.rf-cloning.org/classes/rf_cloning.wdsl' 
+xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' 
+xmlns:xsd='http://www.w3.org/2001/XMLSchema'
+xmlns:soapenc='http://schemas.xmlsoap.org/soap/encoding/'
+xmlns:wsdl='http://schemas.xmlsoap.org/wsdl/'
+xmlns='http://schemas.xmlsoap.org/wsdl/'> 
+  
+<message name='getPrimersRequest'>
+	<part name='plasmid_seq' type='xsd:string' />
+	<part name='insert_seq' type='xsd:string' />
+	<part name='insert_sites' type='xsd:string' />	
+	<part name='plas_target_tm' type='int' />
+	<part name='ins_target_tm' type='int' />
+	<part name='plas_min_size' type='int' />
+	<part name='ins_min_size' type='int' />
+	<part name='plas_max_size' type='int' />
+	<part name='ins_max_size' type='int' />
+</message>
+<message name='getPrimersResponse'>
+	<part name='result' type='xsd:string' />
+</message>
+
+<portType name='PrimerDesignPortType'>
+	<operation name='getPrimers'>
+		<input message='tns:getPrimersRequest' />
+		<output message='tns:getPrimersResponse' />
+	</operation>
+</portType>
+
+<binding name='PrimerDesignBinding' type='tns:PrimerDesignPortType'>
+	<soap:binding style='rpc' transport='http://schemas.xmlsoap.org/soap/http'/>
+	<operation name='getPrimers'>
+		<soap:operation soapAction='urn:xmethods-delayed-quotes#getPrimers' />
+		<input>
+			<soap:body use='encoded' namespace='urn:xmethods-delayed-quotes' encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' />
+		</input>
+		<output>
+			<soap:body use='encoded' namespace='urn:xmethods-delayed-quotes' encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' />
+		</output>
+	</operation>
+</binding>
+	
+
+<service name='PrimerDesignService'>
+	<port name='PrimerDesignPort' binding='PrimerDesignBinding'>
+		<soap:address location='http://www.rf-cloning.org/classes/rf_cloning_server.php' />
+	</port>
+</service>
+
+</definitions>
