@@ -62,8 +62,13 @@ function get_email(responseText, responseStatus)
 <h1>SOAP web service</h1>
 <p>If you would like to write your own programs that use the primer design algorithm on this site, the rf-cloning server can handle XML requests using the Simple Object Access Protocol (SOAP).</p> 
 <p>The wsdl file is at <a href="classes/rf_cloning.wsdl">http://www.rf-cloning.org/classes/rf_cloning.wsdl</a></p> 
-<p>I have also written a client class in php: <a href="classes/rf_cloning_client.txt">http://www.rf-cloning.org/classes/rf_cloning_client.txt</a>.<br />
-As well as an example Perl client: <a href="classes/perl_soap_client.txt">http://www.rf-cloning.org/classes/perl_soap_client.txt</a>.</p>
+<p>I have also written a number of client classs in:</p> 
+<ul>
+<li>php <a href="soap_clients/rf_cloning_client.txt">http://www.rf-cloning.org/soap_clients/rf_cloning_client.txt</a>.</li>
+<li>perl <a href="soap_clients/perl_soap_client.txt">http://www.rf-cloning.org/soap_clients/perl_soap_client.txt</a>.</li>
+<li>python3 <a href="soap_clients/soap_client.py">http://www.rf-cloning.org/soap_clients/soap_client.py</a>.</li>
+</ul>
+<p>If you just want a command line program that should work out of the box, download the 'executable' version of the <a href="soap_clients/soap_client">python3 client</a>. Use the -h flag to display usage instructions.
 <p>If you write a client class in another language and are willing to share, I'd love to <span id="email1">hear from you</span>.</p>
 <div style="position:absolute; left:500px; top:800px;"><?php include("includes/footer.php"); ?></div>
 </body>
