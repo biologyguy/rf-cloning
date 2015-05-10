@@ -77,11 +77,16 @@ class RFcloning():
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser(prog="soap_client", description="", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(prog="soap_client", description="Batch run jobs through the rf-cloning server.",
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument("plasmid_seq", help="", action="store")
-    parser.add_argument("insert_seqs", action="store")
-    parser.add_argument("insert_sites", action="store", type=str)
+    parser.add_argument("plasmid_seq", action="store",
+                        help="Single sequence in fasta, gb, or plain text format. If multiple plasmids are in the file,"
+                             " only the top most will be used.")
+    parser.add_argument("insert_seqs", action="store",
+                        help="Multiple sequences in fasta or gb format. A project will be generated for each.")
+    parser.add_argument("insert_sites", action="store", type=str,
+                        help="The exact insert location start-end. E.g., '20-73', or '149-149'")
     # parser.add_argument("-c", "--choice", help="", type=str, choices=["", ""], default=False)
     # parser.add_argument("-m", "--multi_arg", nargs="+", help="", default=[])
 
