@@ -205,6 +205,36 @@ function get_email(responseText, responseStatus)
 </table>
 <p>When the secondary PCR has completed, add 20 units of DpnI directly to the reaction mix (don't worry, it's 100% active in PCR buffers) and incubate for 2 hours at 37&deg;C, followed by 20mins at 80&deg;. Your sample should now be ready to transform into your favourite competent cells. Be aware that rf-cloning reactions tend to be fairly low efficiency, so high competency cells are beneficial, but by no means necessary. If you are using standard sub-cloning grade cells, you may find it advantageous to spread the entire transformation reaction out across 2-4 selective plates.</p><br />
 
+<p>Q: When I created a new project there is a note underneath the Reverse Primer that says "The insert is fully synthesized by the primers..."
+<br />What, exactly, does this mean?</p>
+<p>A: Congrats! You're project is probably a really easy one and you get to skip the 1° PCR 😀<br />
+Set up the 2° PCR reaction as you normally would but leave out any template and include 5 ng of each primer.<br />
+Now run the following PCR program:</p>
+
+<table border="1">
+	<tr>
+		<th colspan='4'>Thermal Cycler Conditions</th>
+	</tr>
+	<tr>
+		<td>Denature</td><td>98&deg;C</td><td>30sec</td><td>1X</td>
+	</tr>
+<tr style="background:#CCC">
+		<td>Denature</td><td>98&deg;C</td><td>8sec</td><td rowspan="3" style="vertical-align:middle">5X</td>
+</tr>
+	<tr style="background:#CCC">
+		<td>Anneal</td><td style="padding-right:10px;">55&deg;C</td><td>20sec</td>
+	</tr>
+	<tr style="background:#CCC">
+		<td>Extension</td><td>72&deg;</td><td style="padding-right:10px;">5sec</td>
+	</tr>
+	<tr>
+		<td style="padding-right:10px;">Hold</td><td>4&deg;C</td><td></td><td></td>
+	</tr>
+</table>
+
+<p>Add your template to the tubes and proceed normally with a full 2° PCR reaction.</p>
+<br />
+
 <!-- <p>Q: Yikes!! It didn't work! What now?</p>
 <p>A: Don't panic quite yet. Here is a little <a href="trouble.php">trouble shooting guide</a> that may help you along.</p> 
 -->
@@ -254,7 +284,7 @@ function get_email(responseText, responseStatus)
 I really like hearing from people, and am happy to help if you are having any problems.
 Before emailing me directly with troubleshooting questions, however, please consider posting <a href="http://www.rf-cloning.org/fluxbb/">to the forum</a>.
 I am notified of new posts and will reply promptly, but this way others get the benefit of our exchange.
-Also, if sending me a troubleshooting question directly, send me the project id of the project giving you issues (found in the url of the project, e.g., http://www.rf-cloning.org/rf_cloning_project.php?proj_id=<i><b>763d16679721c3815d7c0fcd148c1324</b></i>).
+Also, if sending me a troubleshooting question directly, include the project id of the project giving you issues (found in the url of the project, e.g., http://www.rf-cloning.org/rf_cloning_project.php?proj_id=<i><u>c490f121701607e5a2b4b3b43d701017</u></i>).
 If you don't have the proj_id then include the name of the plasmid or insert, or at the very least the primer sequences, so I can search the database.
 </p>
 
