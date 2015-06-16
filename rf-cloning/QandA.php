@@ -2,7 +2,7 @@
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) 2009-2012 Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -13,7 +13,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #*************************************************************************************************/
-require_once('includes/db_connect.php');
+require_once('../includes/rf-cloning/db_connect.php');
 
 if(isset($_COOKIE['user_id']))
 	{
@@ -61,26 +61,19 @@ function get_email(responseText, responseStatus)
 
 <body onload="rf_diagram(); $email.update('check=ok','POST');">
 <div class="tabs">
-    <ul>
-        <li><a href='index.php'><span>Home</span></a></li>
-			<?php 	$login_status = isset($login_status) ? $login_status : "false";
-					if($login_status == "true") echo "<li><a href='plasmid_management.php'><span>Manage plasmids</span></a></li>"; ?>
-        <li><a href='savvy.php'><span>Savvy</span></a></li>
-        <li><a href='soap_server.php'><span>SOAP</span></a></li>
-        <li><a href="login.php"><span><?php if($login_status == "true") echo "Log out"; else echo "Log in/Register";  ?></span></a></li>
-    </ul>
+    
 </div>
 <h4>Please note, this site is provided as is, with no warranty. I will only make feature updates that I think are stable, but bugs have been known to lurk in the dark recesses... if you notice something amiss or feel like an important feature should be added, <span id="email1">let me know</span>!</h4>  
     
 <p>Q: What is restriction-free cloning?</p>
-<p>A: RF cloning (aka overlap extension PCR cloning) is a PCR-based method for the creation of custom DNA plasmids. Essentially, it allows for the insertion of any sequence into any position within any plasmid, independent of restriction enzyme recognition sites or homologous recombination sites within these sequences*. To accomplish this, a pair of hybrid primers are designed containing complementary sequence to both the desired insert and the target plasmid. These primers are used to amplify the insert from an appropriate source using high-fidelity PCR conditions. The resulting product is purified, and used as a 'mega-primer' in a secondary PCR reaction, with the target plasmid acting as template. The plasmid is amplified in both directions, and the mega-primers act as long single-stranded overhangs that allow the complementary strands of the plasmid to anneal, forming a nicked hybrid molecule. DpnI is used to degrade any parental plasmid (based on its methylation), and the final product is used to transform competent bacterial strains normally. This process is depicted below.</p>
+<p>A: RF cloning (aka overlap extension PCR cloning, or ligation independent cloning) is a PCR-based method for the creation of custom DNA plasmids. Essentially, it allows for the insertion of any sequence into any position within any plasmid, independent of restriction enzyme recognition sites or homologous recombination sites within these sequences*. To accomplish this, a pair of hybrid primers are designed containing complementary sequence to both the desired insert and the target plasmid. These primers are used to amplify the insert from an appropriate source using high-fidelity PCR conditions. The resulting product is purified, and used as a 'mega-primer' in a secondary PCR reaction, with the target plasmid acting as template. The plasmid is amplified in both directions, and the mega-primers act as long single-stranded overhangs that allow the complementary strands of the plasmid to anneal, forming a nicked hybrid molecule. DpnI is used to degrade any parental plasmid (based on its methylation), and the final product is used to transform competent bacterial strains normally. This process is depicted below.</p>
 		<p class='indent note'>*In practice, certain constraints exist. For example, very large sequences (>8KB), highly repetitive sequences, and sequences with significant secondary structure can all interfere with an RF-cloning project.</p>
 <br />
 
 <div id="rf_diagram"></div>
 
 <p>Q: How do I use the website to design an RF cloning project?</p>
-<p>A: From the home page, paste your desired insert sequence into the upper text area, and your destination plasmid sequence in the lower text area. You can also select from popular plasmid sequences, or any sequences you have saved to the database from the associated pull-down menu. Indicate the insertion points within the plasmid, either by adding two exclamation "!" points directly into the sequence, or by specifying the positions in the appropriate text boxes. Click run, and the software will generate custom hybrid primers to accomplish your cloning project. You can further manipulate the primers by shifting the insertion points, or by increasing/decreasing the length of the sequences complementary to the plasmid or insert, using the provided arrow buttons. Annealing temperatures are calculated for the primary and secondary PCR reactions, the expected length of the primary PCR product is given, as well as recommendations for the secondary PCR conditions. It has been my experience that the high-fidelity long-read polymerases iProof and Phusion (available from Bio-Rad and NEB respectively) produce the best results, and the extension times calculated are based on these enzymes. Other high fidelity polymerases can also work, although the manufacturer's instructions should be followed to determine appropriate PCR conditions.</p>
+<p>A: From the home page, paste your destination plasmid sequence into the upper text area, and your desired insert sequence in the lower text area. You can also select from popular plasmid sequences, or any sequences you have saved to the database from the associated pull-down menu. Indicate the insertion points within the plasmid, either by adding two exclamation "!" points directly into the sequence, or by specifying the positions in the appropriate text boxes. Click run, and the software will generate custom hybrid primers to accomplish your cloning project. You can further manipulate the primers by shifting the insertion points, or by increasing/decreasing the length of the sequences complementary to the plasmid or insert, using the provided arrow buttons. Annealing temperatures are calculated for the primary and secondary PCR reactions, the expected length of the primary PCR product is given, as well as recommendations for the secondary PCR conditions. It has been my experience that the high-fidelity long-read polymerases iProof and Phusion (available from Bio-Rad and NEB respectively) produce the best results, and the extension times calculated are based on these enzymes. Other high fidelity polymerases can also work, although the manufacturer's instructions should be followed to determine appropriate PCR conditions.</p>
 <br />
 
 <p>Q: What is a good starting protocol for my RF cloning project?</p>
@@ -115,7 +108,8 @@ function get_email(responseText, responseStatus)
 		<td> </td><td>H<sub>2</sub>O</td><td>To 50μl</td>
 	</tr>
 </table></td>
-<td style="vertical-align:top"><table border="1">
+
+<td style="vertical-align:top;padding-right:40px;"><table border="1">
 	<tr>
 		<th colspan='4'>Thermal Cycler Conditions</th>
 	</tr>
@@ -134,10 +128,12 @@ function get_email(responseText, responseStatus)
 	<tr>
 		<td style="padding-right:10px;">Final Extension</td><td>72&deg;C</td><td>5min</td><td>1X</td>
 	</tr>
-</table></td></tr>
+</table></td>
+
+</tr>
 </table>
 <p>It's generally a good idea to do 50μl reactions for the primary PCR, to ensure you generate enough megaprimer for the secondary PCR. Gel extract the PCR product, and determine its concentration.</p>
-<p>For the secondary PCR reaction, you should aim for a molar insert:plasmid ratio of 20, with ~100ng of parental plasmid (the defaults calculated for you are a good starting point).</p>
+<p>For the secondary PCR reaction, you should aim for a molar insert:plasmid ratio of 20, with ~100ng of parental plasmid (the defaults calculated for you are a good starting point). Two different cycling conditions are given in the tables below, and I recommend using the 2-Step protocol. This is different than described in my paper, but I've received enough feedback from users whose reactions fail when using a lower annealing temp and succeed when it's skipped, that I'm pretty sure you'll smile more with the 2-Step method.</p>
 <h3>Secondary PCR</h3>
 <table><tr><td style="padding-right:40px;">
 <table border="1">
@@ -163,9 +159,10 @@ function get_email(responseText, responseStatus)
 		<td> </td><td>H<sub>2</sub>O</td><td>To 20μl</td>
 	</tr>
 </table></td>
-<td style="vertical-align:top"><table border="1">
+
+<td style="vertical-align:top;padding-right:40px;"><table border="1">
 	<tr>
-		<th colspan='4'>Thermal Cycler Conditions</th>
+		<th colspan='4'>3-Step Thermal Cycler Conditions</th>
 	</tr>
 	<tr>
 		<td>Denature</td><td>98&deg;C</td><td>30sec</td><td>1X</td>
@@ -182,9 +179,31 @@ function get_email(responseText, responseStatus)
 	<tr>
 		<td style="padding-right:10px;">Final Extension</td><td>72&deg;C</td><td>5min</td><td>1X</td>
 	</tr>
-</table></td></tr>
+</table></td>
+
+
+<td style="vertical-align:top"><table border="1">
+	<tr>
+		<th colspan='4'>2-Step Thermal Cycler Conditions</th>
+	</tr>
+	<tr>
+		<td>Denature</td><td>98&deg;C</td><td>30sec</td><td>1X</td>
+	</tr>
+<tr style="background:#CCC"> 
+		<td>Denature</td><td>98&deg;C</td><td>8sec</td><td rowspan="2" style="vertical-align:middle">15X</td>
+</tr>
+	<tr style="background:#CCC">
+		<td>Extension</td><td>72&deg;</td><td style="padding-right:10px;">30sec/kb</td>
+	</tr>
+	<tr>
+		<td style="padding-right:10px;">Final Extension</td><td>72&deg;C</td><td>5min</td><td>1X</td>
+	</tr>
+</table></td>
+
+
+</tr>
 </table>
-<p>When the secondary PCR has completed, add 1μl of DpnI directly to the reaction mix (don't worry, it's 100% active in PCR buffers) and incubate for 2 hours at 37&deg;C, followed by 20mins at 80&deg;. Your sample should now be ready to transform into your favourite competent cells. Be aware that rf-cloning reactions tend to be fairly low efficiency, so high competency cells are beneficial, but by no means necessary. If you are using standard sub-cloning grade cells, you may find it advantageous to spread the entire transformation reaction out across 2-4 selective plates.</p><br />
+<p>When the secondary PCR has completed, add 20 units of DpnI directly to the reaction mix (don't worry, it's 100% active in PCR buffers) and incubate for 2 hours at 37&deg;C, followed by 20mins at 80&deg;. Your sample should now be ready to transform into your favourite competent cells. Be aware that rf-cloning reactions tend to be fairly low efficiency, so high competency cells are beneficial, but by no means necessary. If you are using standard sub-cloning grade cells, you may find it advantageous to spread the entire transformation reaction out across 2-4 selective plates.</p><br />
 
 <!-- <p>Q: Yikes!! It didn't work! What now?</p>
 <p>A: Don't panic quite yet. Here is a little <a href="trouble.php">trouble shooting guide</a> that may help you along.</p> 
@@ -193,7 +212,7 @@ function get_email(responseText, responseStatus)
 <p>A: DNA melting temperatures are approximated with the Wallace-Itakura rule for short sequences less than 14bps:</p>
 <p>T<sub>m</sub> = 4&deg;C &times; (# of G's and C's) + 2&deg;C &times; (# of A's and T's)</p>
 
-<p>For sequences &ge; 14 base pairs (and your primers should be at least this big), I've borrowed a function from <a href="http://www.biophp.org/minitools/melting_temperature/demo.php">BioPHP</a> that uses nearest-neighbor thermodynamics to approximate T<sub>m</sub>. The equation is influenced by salt and primer concentrations, and I've hard-coded 500nM as the primer conc. and 50mM as the monovalent cation conc. Magnesium is also an important variable in the equation, and I've set its value to zero for the purposes of calculating annealing temperature. Obviously you're going to be adding Mg<sup>2+</sup> to your PCR reaction if you want the polymerase to do its thing, and this will increase the T<sub>m</sub> by 5-10&deg;C. Since you want your annealing temp 5-10&deg;C <i>below</i> T<sub>m</sub>, I think you'll find that the software generated values meet your needs nicely.</p>
+<p>For sequences &ge; 14 base pairs (and your primers should be at least this big), I've borrowed a function from <a href="http://www.biophp.org/minitools/melting_temperature/demo.php">BioPHP</a> that uses nearest-neighbor thermodynamics to approximate T<sub>m</sub>. The equation is influenced by salt and primer concentrations, and I've hard-coded 500nM as the primer conc. and 50mM as the monovalent cation conc. Magnesium is also an important variable in the equation, and I've set its value to zero for the purposes of calculating annealing temperature. Obviously you're going to be adding Mg<sup>2+</sup> to your PCR reaction if you want the polymerase to do its thing, and this will increase the T<sub>m</sub> by 5-10&deg;C. Given that you want your annealing temp 5-10&deg;C <i>below</i> T<sub>m</sub>, I think you'll find that the software generated values meet your needs nicely.</p>
 <br />
 
 <p>Q: How about a reference list for some further reading?</p>
@@ -202,10 +221,11 @@ function get_email(responseText, responseStatus)
 	<li>van den Ent F, Lowe J 2006 <a href="http://www.ncbi.nlm.nih.gov/pubmed/16480772">RF cloning: a restriction-free method for inserting target genes into plasmids.</a> J Biochem Biophys Methods 67(1):67-74.</li>
     <li>Unger T, Jacobovitch Y, Dantes A, Bernheim R, Peleg Y 2010 <a href="http://www.ncbi.nlm.nih.gov/pubmed/20600952">Applications of the Restriction Free (RF) cloning procedure for molecular manipulations and protein expression.</a> J Struct Biol 172(1):34-44.</li>
     <li>Bryksin AV, Matsumura I 2010 <a href="http://www.ncbi.nlm.nih.gov/pubmed/20569222">Overlap extension PCR cloning: a simple and reliable way to create recombinant plasmids</a>. Biotechniques 48(6):463-5.</li>
+    <li>Peleg Y, Unger T 2014 <a href="http://www.ncbi.nlm.nih.gov/pubmed/24395358">Application of the Restriction-Free (RF) Cloning for Multicomponents Assembly.</a> Methods Mol Biol. 2014;1116:73-87.</li>
 </ul><br />
 
 <p>Q: Can I return to projects later, after I've left the site?</p>
-<p>A: Yep. All projects are assigned a unique 32 byte hash code at runtime, and saved to the database. You'll find the code embedded in the URL on the project page, so you can bookmark your projects and return whenever you like. Alternately, you can register an account with the site, and use the plasmid management system I've built to keep your projects and backbones organized. See below for more on that.</p> 
+<p>A: Yep. All projects are assigned a unique 32 byte hash code at runtime, and saved to the database. You'll find the code embedded in the URL on the project page, so you can bookmark your projects and return whenever you like. Alternately, you can register an account with the site, and use the plasmid management system to keep your projects and backbones organized. See below for more on that.</p> 
 <br />
 
 <p>Q: How do I manage my plasmids and projects?</p>
@@ -218,18 +238,25 @@ function get_email(responseText, responseStatus)
 <br />
 
 <p>Q: My boss just freaked out at me because I designed my rf-cloning project on your site. It's really important/sensitive/dangerous stuff, and don't take this the wrong way, but we don't trust the internet... Errrmmm, help?</p>
-</p>A: Okay, two things. First, if you are super worried about any projects you've run on the server, please don't hesitate to get in touch with me and we'll get all the important/sensitive/dangerous stuff deleted from the database. I've done what I can to secure the server, but hey I get it, even the FBI gets hacked. Second, projects sent directly to the server via <a href="soap_server.php">SOAP requests</a> are NOT saved to the database, so you might want to go that route from now on. Or alternatively, see the next question...</p><br />
+</p>A: Okay, two things. First, if you are super worried about any projects you've run on the server, please don't hesitate to get in touch with me and we'll get all the important/sensitive/dangerous stuff deleted from the database. I've done what I can to secure the server, but hey I get it, websites get hacked. Second, projects sent directly to the server via <a href="soap_server.php">SOAP requests</a> are NOT saved to the database, so you might want to go that route from now on. Or alternatively, see the next question...</p><br />
 
 <p>Q: I want to clone rf-cloning.org on my own server. Can I have a copy?</p>
-<p>A: You sure can. All the source files are available for download <a href="download_site.php">right here</a>!</p><br />  
+<p>A: You can, but you'll need to shoot me an email for it. I used to have all the source files available for download, but it's kind of a pain keeping it up to date for the very rare instance that someone wants it. Also, from a security standpoint it's probably better to keep the guts of the site a little less open to the www.</p><br />  
 
 <p>Q: I've been using your site, and would like to reference it in a publication I'm putting together. How should I do that?</p>
-<p>A: Well... I've submitted the site to the Journal of Nucleic Acid Research for publication in their next web server issue (this would be June 2012), but that doesn't help much right now. I'd certainly like to be reference though, so maybe fire me an email and we'll work something out.</p> 
+<p>A: <br /><i>RF-Cloning.org: an online tool for the design of restriction-free cloning projects</i>
+<br />Stephen R. Bond; Christian C. Naus
+<br />Nucleic Acids Research 2012; doi: 10.1093/nar/gks396</p> 
 <br />
 
 <p>Q: How can I contact you?</p>
-<p>A: Please direct all questions, comments, or concerns to <span id="email2">Steve Bond</span></p>
-
+<p>A: Please direct all questions, comments, or concerns to <span id="email2">Steve Bond</span><br />
+I really like hearing from people, and am happy to help if you are having any problems.
+Before emailing me directly with troubleshooting questions, however, please consider posting <a href="http://www.rf-cloning.org/fluxbb/">to the forum</a>.
+I am notified of new posts and will reply promptly, but this way others get the benefit of our exchange.
+Also, if sending me a troubleshooting question directly, send me the project id of the project giving you issues (found in the url of the project, e.g., http://www.rf-cloning.org/rf_cloning_project.php?proj_id=<i><b>763d16679721c3815d7c0fcd148c1324</b></i>).
+If you don't have the proj_id then include the name of the plasmid or insert, or at the very least the primer sequences, so I can search the database.
+</p>
 
 <?php include("includes/footer.php"); ?>
 </body>
