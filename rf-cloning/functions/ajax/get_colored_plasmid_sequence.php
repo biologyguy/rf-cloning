@@ -2,7 +2,7 @@
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -24,7 +24,7 @@ I may want to just re-write this from scratch at some point...
 
 require_once('../../../includes/rf-cloning/db_connect.php');
 
-$get_sequence = mysql_fetch_row(mysql_query("	SELECT sequence, savvy_markers 
+$get_sequence = mysqli_fetch_row(mysqli_query($conn, "SELECT sequence, savvy_markers 
 												FROM ".$_POST['database']." 
 												WHERE plasmid_id ='".$_POST['id']."' ;"));
 $input = $get_sequence[0];

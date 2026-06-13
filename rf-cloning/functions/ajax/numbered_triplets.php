@@ -2,7 +2,7 @@
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -16,8 +16,8 @@
 $input = $_POST['input'];
 	
 $counter = 0;
-$input = preg_replace("/[^A-Za-z]/i","",$input);
-$input = preg_replace("/[^ATUGCatugc]/i","X",$input);
+$input = strtoupper(preg_replace("/[^A-Z]/i","",$input));
+$input = preg_replace("/[^ATUGC]/i","X",$input);
 	
 $input = chunk_split($input,10,",");
 

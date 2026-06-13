@@ -2,7 +2,7 @@
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -13,7 +13,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #*************************************************************************************************/
-	
 
 /*********************************************************************************/
 var $get_colored_plasmid_sequence = new ajaxObject("functions/ajax/get_colored_plasmid_sequence.php", get_colored_plasmid_sequence);
@@ -70,6 +69,7 @@ function save_project(responseText, responseStatus)
 		{
 		clear_save_alert();
 		var $response_array = responseText.split("~|~");
+
 		if (isInt($response_array[1]))
 			{
 			document.getElementById("project_id").value = $response_array[1];	

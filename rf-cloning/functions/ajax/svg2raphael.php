@@ -2,7 +2,7 @@
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -159,8 +159,12 @@ function svg_polygon($node, $div_id)
 	foreach ($points as $i)
 		{
 		$next = explode(",", $i);
-		@$output .= "L".$next[0]." ".$next[1];
-		}
+		$output .= "L".$next[0];
+                if (sizeof($next) > 1)
+                    {
+                    $output .= " ".$next[1];
+                    }
+                }
 	$output .= "Z').attr({";	
 	foreach ($node->attributes() as $attrib => $attrib_value)
 		{

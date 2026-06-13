@@ -2,7 +2,7 @@
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -20,7 +20,7 @@ $_POST['database'] = isset($_POST['database']) ? $_POST['database'] : "";
 	
 if (isset($_SESSION['user_id']))
 	{
-	$user_info = mysql_fetch_assoc(mysql_query("SELECT * FROM users WHERE user_id='".$_SESSION['user_id']."' ;"));	
+	$user_info = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM users WHERE user_id='".$_SESSION['user_id']."' ;"));	
 	}
 else
 	{
@@ -32,7 +32,7 @@ else
 if ($user_info['session_check'] == $_SESSION['session_check'])
 	{
 	$session_check = mt_rand(1,1000000000);
-	mysql_query("UPDATE users SET session_check = ".$session_check." WHERE user_id = ".$user_info['user_id'].";");
+	mysqli_query($conn, "UPDATE users SET session_check = ".$session_check." WHERE user_id = ".$user_info['user_id'].";");
 	
 	$user_info['session_check'] = $session_check;
 	$_COOKIE['session_check'] = $session_check;
@@ -54,7 +54,5 @@ if ($login_status != "true" && ($_POST['submit'] == "Get project" || $_POST['dat
 	header ("Location: login.php");
 	exit;	
 	}
-
-
 
 ?>

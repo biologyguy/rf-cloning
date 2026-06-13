@@ -2,7 +2,7 @@
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -13,7 +13,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #*************************************************************************************************/
-function rf_cloning_output($target, $plasmid, $backbone_name, $insert_name, $orientation, $arrow, $insert_description, $database, $backbone_id, $insert_sites, $plas_target_tm, $ins_target_tm, $plas_min_size, $ins_min_size, $plas_max_size, $ins_max_size)
+function rf_cloning_output($conn, $target, $plasmid, $backbone_name, $insert_name, $orientation, $arrow, $insert_description, $database, $backbone_id, $insert_sites, $plas_target_tm, $ins_target_tm, $plas_min_size, $ins_min_size, $plas_max_size, $ins_max_size)
 	{
 	include_once("savvy_ouput.php");
 	include_once("primer_design.php");
@@ -101,15 +101,15 @@ function rf_cloning_output($target, $plasmid, $backbone_name, $insert_name, $ori
 	if (strlen($plasmid_array[0]) < 100)
 		{
 		$plasmid_array[0] = $plasmid_array[2].$plasmid_array[0]; 		
+		
+		//break if there isn't enough plasmid sequence (after adding the back sequence)
+		if (strlen($plasmid_array[0]) < 200)
+			{
+			$output['error'] = "The plasmid sequence provided is to short. The minimum length required is 100bps on either side of your insert site, but include the entire sequence if you have it.<br /><a href='index.php'>Return to main page</a>";
+			return $output;
+			}
 		}
-	
-	//break if there isn't enough plasmid sequence (after adding the back sequence)
-	if (strlen($plasmid_array[0]) < 200)
-		{
-		$output['error'] = "The plasmid sequence provided is to short. The minimum length required is 100bps on either side of your insert site, but include the entire sequence if you have it.<br /><a href='index.php'>Return to main page</a>";
-		return $output;
-		}
-	
+
 	//Create the primers. If the insert is larger than 50bps, a primary PCR will be required to amplify the insert from another source. If the insert is smaller however, then the whole thing can be synthesized with the primers.
 	$fwd_plas_seq = substr(strrev($plasmid_array[0]),0,100);
 	$rev_plas_seq = strrev(rev_comp(substr($plasmid_array[2],0,100)));
@@ -126,11 +126,9 @@ function rf_cloning_output($target, $plasmid, $backbone_name, $insert_name, $ori
 		{
 		$extension_time_remainder = (($end_plas_size/1000)*(0.33)*60%60);
 		}
-	
-	
-		$savvy_output = savvy_output($backbone_id, $insert_name, $target, $insert_site_1, $insert_site_2, $orientation, $arrow, $database);
-		
-		
+
+		$savvy_output = savvy_output($conn, $backbone_id, $insert_name, $target, $insert_site_1, $insert_site_2, $orientation, $arrow, $database);
+
 	$plasmid = preg_replace("/[!]/","",$plasmid);
 	
 	$output['backbone_id'] = $backbone_id; 

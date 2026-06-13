@@ -48,7 +48,7 @@ function ajaxObject(url, callbackFunction)
 				var uri=urlCall+'?'+that.updating.getTime();
 				that.AJAX.open("POST", uri, true);
 				that.AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-				that.AJAX.setRequestHeader("Content-Length", passData.length);
+				//that.AJAX.setRequestHeader("Content-Length", passData.length);
 				that.AJAX.send(passData);
 				} 
 			else 

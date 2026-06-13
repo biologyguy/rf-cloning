@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 use CGI qw(:standard);
 use CGI::Carp qw( fatalsToBrowser );
 use strict;
@@ -17,11 +17,11 @@ $plasmid_seq =~ s/[^ATGCatcg]//g;
 my $sequencing_seq = param("sequencing_seq");
 $sequencing_seq =~ s/[^ATGCatcg]//g;
 
-my $temp_path = "c:/wamp/cgi-bin/temp_files/";
-my $blast_bin_path = "c:/wamp/cgi-bin/blast/bin/blastn";
+#my $temp_path = "c:/wamp/cgi-bin/temp_files/";
+#my $blast_bin_path = "c:/wamp/cgi-bin/blast/bin/blastn";
 
-#my $temp_path = "/usr/lib/cgi-bin/temp_files/";
-#my $blast_bin_path = "/usr/bin/blastn";
+my $temp_path = "/usr/lib/cgi-bin/temp_files/";
+my $blast_bin_path = "/usr/bin/blastn";
 
 my $rand_num = int(rand(1000000000));
 my $plasmid_obj = Bio::Seq->new(-seq => $plasmid_seq, -alphabet => 'dna', -is_circular => 1 );

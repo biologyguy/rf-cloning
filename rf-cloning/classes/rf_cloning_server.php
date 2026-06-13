@@ -2,7 +2,7 @@
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -13,6 +13,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #*************************************************************************************************/
+
+require_once('../../includes/rf-cloning/db_connect.php');
 include("../functions/primer_design.php");
 include("../functions/rev_comp.php");
 include("../functions/pcr_conditions.php");
@@ -120,6 +122,10 @@ function getPrimers($plasmid_seq, $insert_seq, $insert_sites, $PLAS_TARGET_TM = 
 	$output['target_pcr_size'] = $primer_info['target_pcr_size'];
 	
 	$output = json_encode($output);
+	
+	//count project run in database
+	mysqli_query($conn, "UPDATE `rf-cloning`.`usage` SET `count` = count+1 WHERE `usage`.`id` =1;");
+	
 	return $output;
 	}
 

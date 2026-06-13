@@ -2,7 +2,7 @@
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -15,7 +15,7 @@
 #*************************************************************************************************/
 require_once('../../../includes/rf-cloning/db_connect.php');
 
-$savvy_info = mysql_fetch_assoc(mysql_query("SELECT * FROM ".$_POST['database']." WHERE plasmid_id = ".$_POST['id'].";"));
+$savvy_info = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM ".$_POST['database']." WHERE plasmid_id = ".$_POST['id'].";"));
 
 
 $output['plasmid_name'] = ($_POST['database'] == 'projects') ? $savvy_info['plasmid_name']: $savvy_info['plasmid_name'];

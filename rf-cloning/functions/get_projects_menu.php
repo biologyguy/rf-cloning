@@ -1,8 +1,8 @@
-<?php 
+<?php
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -19,11 +19,11 @@ function get_projects_menu($page)
     								<select name='projects_list' id='projects_list' onChange=\"plasmid_focus(this.options[this.selectedIndex].value,'projects','".$page."');\">
             							<option value='nothing' > --------Projects in progress-------- </option>";
 	
-	$plasmids_query = mysql_query("SELECT * FROM projects WHERE user_id = ".$_COOKIE['user_id']." AND complete = 0;");
+	$plasmids_query = mysqli_query($conn, "SELECT * FROM projects WHERE user_id = ".$_COOKIE['user_id']." AND complete = 0;");
     
 	$plasmids_array = array();
 	
-	while ($row = mysql_fetch_assoc($plasmids_query))
+	while ($row = mysqli_fetch_assoc($plasmids_query))
 		{
 		array_push($plasmids_array,$row);	
 		}
@@ -36,11 +36,11 @@ function get_projects_menu($page)
    
 	$output['drop_down_menu'] .= "<option value='nothing' > ---------Completed projects--------- </option>";
 
-	$plasmids_query = mysql_query("SELECT * FROM projects WHERE user_id = ".$_COOKIE['user_id']." AND complete = 1;");
+	$plasmids_query = mysqli_query($conn, "SELECT * FROM projects WHERE user_id = ".$_COOKIE['user_id']." AND complete = 1;");
 
 	$plasmids_array = array();
 	
-	while ($row = mysql_fetch_assoc($plasmids_query))
+	while ($row = mysqli_fetch_assoc($plasmids_query))
 		{
 		array_push($plasmids_array,$row);	
 		}
@@ -58,5 +58,3 @@ function get_projects_menu($page)
 	
 	return($output);
     }	
-    
-    

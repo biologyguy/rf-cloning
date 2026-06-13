@@ -131,20 +131,20 @@ sub _get_radian{
 #--------------------------------------------------------------------------
 sub _draw_markers {
 	my $self = shift;
-  	%$self = @_;
-  	my $PI = 4 * atan2(1,1); #Get the value of PI
-  	my $PLASMID_SIZE 	= 	$SVGPlasmid::SIZE;
-  	my $RADIUS			=	$SVGPlasmid::RADIUS;
+	my %args = @_;
+	my $PI = 4 * atan2(1,1); #Get the value of PI
+	my $PLASMID_SIZE 	= 	$SVGPlasmid::SIZE;
+	my $RADIUS			=	$SVGPlasmid::RADIUS;
 	my $INVERSE_FLAG 	= 	undef;
-  	my $start_position 	= 	$self->{START};
-	my $arrow_end		= 	$self->{END};
-	my $end_position  	=	undef;
-	my $THICKNESS 		= 	$self->{THICKNESS};
-  	my $HALF_THICKNESS	= 	$self->{THICKNESS} / 2 ;
-	my $MARKER_NAME		=	$self->{NAME};
-	my $COLOR			=	$self->{COLOR};
-	my $STYLE			=	$self->{STYLE};
-	my $ARROW			=	$self->{ARROW};
+	my $start_position 	= 	$args{START};
+	my $arrow_end		= 	$args{END};
+	my $end_position	=	undef;
+	my $THICKNESS		= 	$args{THICKNESS} // 10;
+	my $HALF_THICKNESS	= 	$THICKNESS / 2;
+	my $MARKER_NAME		=	$args{NAME} // '';
+	my $COLOR			=	$args{COLOR} // 'blue';
+	my $STYLE			=	$args{STYLE} // '';
+	my $ARROW			=	$args{ARROW} // 'arrow_on';
 	my $INNER_RADIUS	= 	$RADIUS - 	$HALF_THICKNESS;
 	my $OUTER_RADIUS	=	$RADIUS	+	$HALF_THICKNESS;
 	my $MID_POINT		= 	undef;
@@ -159,7 +159,7 @@ sub _draw_markers {
 		$COLOR = "white";
 	}
 
-	if ($self->{START} > $self->{END}){
+	if ($start_position > $arrow_end){
   		$INVERSE_FLAG 	= 	1;
 		$MID_POINT		= 	(($start_position - $arrow_end) / 2) + $arrow_end;
 		$end_position	=	$arrow_end + $ARROW_HEAD_THICKNESS; 

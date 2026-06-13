@@ -2,7 +2,7 @@
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -13,8 +13,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #*************************************************************************************************/
-
-require_once('includes/db_connect.php');
+require_once('../includes/rf-cloning/db_connect.php');
 include("functions/set_session.php");
 $_REQUEST['login'] = isset($_REQUEST['login']) ? $_REQUEST['login'] : "";
 $password_fail = "";
@@ -23,17 +22,39 @@ $login_fail = "";
 if (isset($_POST['to_login']) && ($_POST['to_login'] == "Log out"))
 	{
 	$session_check = mt_rand(1,1000000000);
-	mysql_query("UPDATE users SET session_check = ".$session_check." WHERE user_id = ".$user_info['user_id'].";");	
+	mysqli_query($conn, "UPDATE users SET session_check = ".$session_check." WHERE user_id = ".$user_info['user_id'].";");	
 	
 	$session_check = mt_rand(1,1000000000);
-	
 	unset($_SESSION['user_id']);
 	unset($_SESSION['first_name']);
 	unset($_SESSION['session_check']);
 	session_destroy();
-	header ("Location: index.php");
 	
-	
+	// Check if user exists in fluxbb database
+	$db_selected = @mysqli_select_db($conn, "fluxbb");
+	if ($db_selected)
+		{
+		$fluxbb_check = mysqli_fetch_row(mysqli_query($conn, "SELECT COUNT(*) FROM users WHERE username = '".$user_info['login']."';"));
+		$dbselected = mysqli_select_db($conn, "rf-cloning");
+
+		if ($fluxbb_check[0] > 0)
+			{
+			// User exists in fluxbb, log them out there
+			header ("Location: fluxbb/login.php?action=out");
+			}
+		else
+			{
+			// User only exists in main site, stay here
+			header ("Location: login.php");
+			}
+		}
+	else
+		{
+		// fluxbb database doesn't exist, just redirect to main login
+		$dbselected = mysqli_select_db($conn, "rf-cloning");
+		header ("Location: login.php");
+		}
+
 	exit;
 	}
 
@@ -45,47 +66,70 @@ if (isset($_POST['login_submit']))
 		$login_fail = "You need to provide a login name if you want in...";
 		$pass = "false";
 		}
-	
+
 	if (empty($_POST['password']))
 		{
 		$password_fail = "You need to provide a password if you want in...";
 		$pass = "false";
 		}
-	
+
 	if ($pass == "true")
 		{
-		$check_login = mysql_fetch_row(mysql_query("SELECT COUNT(*) FROM users WHERE login = '".$_POST['login']."';"));
+		$check_login = mysqli_fetch_row(mysqli_query($conn, "SELECT COUNT(*) FROM users WHERE login = '".$_POST['login']."';"));
 		if ($check_login[0] == 0)
 			{
 			$login_fail = "Sorry, this login name doesn't exist. Please try again, or register.";
 			$pass = "false";
 			}
-		
+
 		if ($pass == "true")
 			{
-			$user_info = mysql_fetch_assoc(mysql_query("SELECT * FROM users WHERE login = '".$_POST['login']."';"));
+			$user_info = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM users WHERE login = '".$_POST['login']."';"));
 			if ($user_info['password'] != md5($_POST['password']))
 				{
 				$password_fail = "The password provided does not match the login name. Please try again.";
 				$pass = "false";
 				}
-			}		
+			}
 		}
-	
+
 	if ($pass == "true")
 		{
 		$session_check = mt_rand(1,1000000000);
-		mysql_query("UPDATE users SET session_check = ".$session_check." WHERE user_id = ".$user_info['user_id'].";");
-		
+		mysqli_query($conn, "UPDATE users SET session_check = ".$session_check." WHERE user_id = ".$user_info['user_id'].";");
+
 		$_SESSION['user_id'] = $user_info['user_id'];
 		$_SESSION['first_name'] = $user_info['first_name'];
 		$_SESSION['session_check'] = $session_check;
-		
-		header ("Location: index.php");
-		
+
+		// Check if user exists in fluxbb database
+		$db_selected = @mysqli_select_db($conn, "fluxbb");
+		if ($db_selected)
+			{
+			$fluxbb_check = mysqli_fetch_row(mysqli_query($conn, "SELECT COUNT(*) FROM users WHERE username = '".$_POST['login']."';"));
+			$dbselected = mysqli_select_db($conn, "rf-cloning");
+
+			if ($fluxbb_check[0] > 0)
+				{
+				// User exists in fluxbb, log them in there
+				header ("Location: fluxbb/login.php?action=in&pass_hash=".md5($_POST['password'])."&req_username=".$_POST['login']);
+				}
+			else
+				{
+				// User only exists in main site, redirect to homepage
+				header ("Location: index.php");
+				}
+			}
+		else
+			{
+			// fluxbb database doesn't exist, just redirect to homepage
+			$dbselected = mysqli_select_db($conn, "rf-cloning");
+			header ("Location: index.php");
+			}
+
 		exit;
 		}
-	
+
 	}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -95,22 +139,23 @@ if (isset($_POST['login_submit']))
 <link rel="stylesheet" href="includes/styles.css" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>RF Cloning Login</title>
+<script src="javascript/analytics.js" language="javascript" type="text/javascript"></script>
 </head>
 
 <body>
 <?php
 if($login_status == "true")
-	{ 
+	{
 ?>
 <form method="post" action="login.php">
 <input type="submit" value="Log out" name="to_login"/>
 </form>
 <?php
 	}
-	
+
 else
 	{
-?>		
+?>
 <form method="post" action="login.php">
 <h1>Login</h1>
 <table>
@@ -132,10 +177,10 @@ else
 </form>
 <br />
 <br />
-If you do not have an account, please <a href="register.php">create one</a>.
+If you do not have an account, please <a href="ster.php">create one</a>.
 <?php
 	}
-include("includes/footer.php"); 
+include("includes/footer.php");
 ?>
 </body>
 </html>

@@ -1,8 +1,8 @@
-<?php 
+<?php
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -13,8 +13,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #*************************************************************************************************/
-require_once('includes/db_connect.php');
-include("functions/set_session.php");		
+require_once('../includes/rf-cloning/db_connect.php');
+include("functions/set_session.php");
 include("functions/rev_comp.php");
 include("functions/obj2array.php");
 include("functions/numbered_triplets.php");
@@ -28,127 +28,161 @@ include("functions/melting_temp.php");
 
 
 //instantiate a new plasmid object
-$plasmid_obj = new Plasmid();
+$plasmid_obj = new Plasmid($conn);
 $error = "";
 
-if(isset($_GET['proj_id']))
-	{
-	$query_string = "SELECT plasmid_id FROM projects WHERE proj_hash='".$_GET['proj_id']."';";
-	try
-		{
-		$saved_project_query = mysql_query($query_string); 
-		if (mysql_error())
-			{
-			throw new Exception(mysql_error());
-			}
-		}
-	
-	catch (Exception $e)
-		{
-		$error .= "Sorry, the project you are requesting doesn't seem to be in the database.<br />".$e."<br />";	
-		}
-	
-	$saved_project_array = mysql_fetch_assoc($saved_project_query); 
-	if(isset($saved_project_array['plasmid_id']))
-		{
-		$plasmid_obj->set_database_plasmid($saved_project_array['plasmid_id'],"projects");	
-		$project_id = $plasmid_obj->get_parameters('plasmid_id');
-		}
-	
-	else
-		{
-		$error .= "Sorry, project #".$_GET['proj_id']." has not been saved to the database. Please check the hash carefully and try again. If you feel like your projects are going missing, please get in touch with me (you can find my email address in the Q & A).<br />"; 	
-		}
-	}
+if(isset($_GET['proj_id'])) {
+    $query_string = "SELECT plasmid_id FROM projects WHERE proj_hash='".$_GET['proj_id']."';";
+    try {
+        $saved_project_query = mysqli_query($conn, $query_string);
+        if (mysqli_error($conn)) {
+            throw new Exception(mysqli_error($conn));
+        }
+    }
+
+    catch (Exception $e) {
+        $error .= "Sorry, the project you are requesting doesn't seem to be in the database.<br />".$e."<br />";
+    }
+
+    $saved_project_array = mysqli_fetch_assoc($saved_project_query);
+    if(isset($saved_project_array['plasmid_id'])) {
+        $plasmid_obj->set_database_plasmid($saved_project_array['plasmid_id'],"projects");
+        $project_id = $plasmid_obj->get_parameters('plasmid_id');
+    }
+
+    else {
+        $error .= "Sorry, project #".$_GET['proj_id']." has not been saved to the database. Did you copy an incorrect
+                   project hash id into the URL? Please check the hash carefully and try again. 
+                   <br />
+                   If you feel like your projects are going missing, please get in touch with me (you can find my email
+                   address in the Q & A).
+                   <br />";
+        /*
+        $error .= "<b>NOTE</b>: As of Oct 20 this is a system-wide error. I'm trying to fix it...<br /><br />";
+        $error .= "POST dump:<br /><table>";
+        foreach ($_POST as $key => $value) {
+            $error .= "<tr><td>".htmlspecialchars($key).": </td><td>".htmlspecialchars($value)."</td></tr>";
+        }
+        $error .= "</table><br/ >GET dump:<br /><table>";
+        foreach ($_GET as $key => $value) {
+            $error .= "<tr><td>".htmlspecialchars($key).": </td><td>".htmlspecialchars($value)."</td></tr>";
+        }
+        $error .= "</table><br/ >Included Files:<br /><table>";
+        $included_files = get_included_files();
+        foreach ($included_files as $filename) {
+            $error .= "<tr><td>".$filename."</td></tr>";
+        }
+        $error .= "</table><br />";
+        $error .= "IP: ".$_SERVER['REMOTE_ADDR']."<br />";
+        $error .= date('Y-m-d H:i:s')."<br />";
+        $error .= "</ul>";
+        */
+    }
+}
 
 //If the user is coming from the main page, starting a new project
-elseif (isset($_POST['execute']))
-	{
-	$project_id = "new";
-	$database = (empty($_POST['database'])) ? "blank" : $_POST['database'] ;
-	$backbone_id = (empty($_POST['backbone_id'])) ? "blank" : $_POST['backbone_id'] ;
-	$target_sequence = (empty($_POST['target_sequence'])) ? "blank" : $_POST['target_sequence'] ;
-	$plasmid_sequence = (empty($_POST['plasmid_sequence'])) ? "blank" : $_POST['plasmid_sequence'] ;
-	$backbone_name = (empty($_POST['backbone_name'])) ? "NotSet" : $_POST['backbone_name'] ;
-	$insert_name = (empty($_POST['insert_name'])) ? "NotSet" : $_POST['insert_name'] ;
-	$orientation = (empty($_POST['orientation'])) ? "cw" : $_POST['orientation'] ;
-	$arrow = (empty($_POST['arrow'])) ? "on" : $_POST['arrow'] ;
-	$insert_description = (empty($_POST['insert_description'])) ? "No Description" : $_POST['insert_description'] ;	
-	$insert_sites = (is_numeric($_POST['insert_site_1']) && is_numeric($_POST['insert_site_2'])) ? round($_POST['insert_site_1'])."-".round($_POST['insert_site_2']) : false;
-	$proj_hash = md5(rand(1,10000000)*rand(1,10000000));
-	$plas_target_tm = $_POST['plasmid_target_Tm'];
-	$ins_target_tm = $_POST['insert_target_Tm'];
-	$plas_min_size = $_POST['plasmid_min_length'];
-	$ins_min_size = $_POST['insert_min_length'];
-	$plas_max_size = $_POST['plasmid_max_length'];
-	$ins_max_size = $_POST['insert_max_length'];
-	
-	if ($target_sequence == "blank" || $plasmid_sequence == "blank")
-		{
-		$error .= "You need to include an insert sequence and a plasmid sequence for this to work.<br /><a href='index.php'>Return to main page</a><br />";
-		
-		}
-		
-	if ($orientation == "ccw")
-		{
-		$target_sequence = rev_comp($target_sequence);	
-		}
-		
-	if ($backbone_id != "blank")
-		{
-		$incoming_plas_md5 = trim(preg_replace("/>.+[\r\n]/i","",$plasmid_sequence));
-		$incoming_plas_md5 = md5(preg_replace("/[^ATUGCatugc]/i","",$incoming_plas_md5));	
-		$backbone_md5 = mysql_fetch_row(mysql_query("SELECT checksum FROM plasmids WHERE plasmid_id = ".$backbone_id.";"));
-		
-		if($incoming_plas_md5 != $backbone_md5[0])
-			{
-			$backbone_id = "blank";
-			}
-		}
-	
-		$output_array = rf_cloning_output($target_sequence, $plasmid_sequence, $backbone_name, $insert_name, $orientation, $arrow, $insert_description, $database, $backbone_id, $insert_sites, $plas_target_tm, $ins_target_tm, $plas_min_size, $ins_min_size, $plas_max_size, $ins_max_size);
-		
-	if(isset($output_array['error']))
-		{
-		$error .=  $output_array['error']."<br />";
-		}
-		
-	if($error == "")
-		{
-		$params_array = array( "user_id" => 1,"plasmid_id" => $project_id, "plasmid_name" => $output_array['plasmid_name'], "plasmid_seq" => $output_array["sequence"], "savvy_markers" => $output_array['savvy_markers'], "savvy_enzymes" => $output_array["savvy_enzymes"], "database" => "projects", "insert_name" => $output_array['insert_name'], "backbone_database" => $output_array['backbone_database'], "backbone_id" => $output_array['backbone_id'], "orig_plasmid_seq" => $output_array['plasmid_sequence'], "insert_seq" => $output_array['insert_sequence'], "insert_sites" => $output_array['insert_sites'], "fwd_primer" => $output_array['fwd_primer_database'], "rev_primer" => $output_array['rev_primer_database'], "notes" => $output_array['notes'], "savvy_meta" => $output_array['savvy_meta'], "complete" => $output_array['complete'], "proj_hash" => $proj_hash);	
-		
-		$plasmid_obj->set_parameters($params_array);
-		}
-	}
-	
-else
-	{
-	$error .=  "Hmmm... You should probably try getting here from the <a href='index.php'>main page</a>.<br />";	
-	}
-	
+elseif (isset($_POST['execute'])) {
+    $project_id = "new";
+    $database = (empty($_POST['database'])) ? "blank" : $_POST['database'] ;
+    $backbone_id = (empty($_POST['backbone_id'])) ? 0 : (int)$_POST['backbone_id'] ;
+    $target_sequence = (empty($_POST['target_sequence'])) ? "blank" : $_POST['target_sequence'] ;
+    $plasmid_sequence = (empty($_POST['plasmid_sequence'])) ? "blank" : $_POST['plasmid_sequence'] ;
+    $backbone_name = (empty($_POST['backbone_name'])) ? "NotSet" :  stripslashes($_POST['backbone_name']) ;
+    $backbone_name = preg_replace("/'/i","&rsquo;",$backbone_name);
+    $insert_name = (empty($_POST['insert_name'])) ? "NotSet" :  stripslashes($_POST['insert_name']) ;
+    $insert_name = preg_replace("/'/i","&rsquo;",$insert_name);
+    $orientation = (empty($_POST['orientation'])) ? "cw" : $_POST['orientation'] ;
+    $arrow = (empty($_POST['arrow'])) ? "on" : $_POST['arrow'] ;
+    $insert_description = (empty($_POST['insert_description'])) ? "No Description" :  stripslashes($_POST['insert_description']) ;
+    $insert_description = preg_replace("/'/i","&rsquo;",$insert_description);
+    $insert_sites = (is_numeric($_POST['insert_site_1']) && is_numeric($_POST['insert_site_2'])) ? round($_POST['insert_site_1'])."-".round($_POST['insert_site_2']) : false;
+    $proj_hash = md5(rand(1,10000000)*rand(1,10000000));
+    $plas_target_tm = $_POST['plasmid_target_Tm'];
+    $ins_target_tm = $_POST['insert_target_Tm'];
+    $plas_min_size = $_POST['plasmid_min_length'];
+    $ins_min_size = $_POST['insert_min_length'];
+    $plas_max_size = $_POST['plasmid_max_length'];
+    $ins_max_size = $_POST['insert_max_length'];
+
+    if ($target_sequence == "blank" || $plasmid_sequence == "blank") {
+        $error .= "You need to include an insert sequence and a plasmid sequence for this to work.<br />
+                   <a href='index.php'>Return to main page</a><br />";
+    }
+
+    if ($orientation == "ccw") {
+        $target_sequence = rev_comp($target_sequence);
+    }
+
+    if ($backbone_id != 0) {
+        $incoming_plas_md5 = trim(preg_replace("/>.+[\r\n]/i","",$plasmid_sequence));
+        $incoming_plas_md5 = md5(preg_replace("/[^ATUGCatugc]/i","",$incoming_plas_md5));
+        $backbone_md5 = mysqli_fetch_row(mysqli_query($conn, "SELECT checksum FROM plasmids WHERE plasmid_id = ".$backbone_id.";"));
+
+        if($incoming_plas_md5 != $backbone_md5[0]) {
+            $backbone_id = 0;
+        }
+    }
+
+        $output_array = rf_cloning_output($conn, $target_sequence, $plasmid_sequence, $backbone_name, $insert_name,
+                                          $orientation, $arrow, $insert_description, $database, $backbone_id,
+                                          $insert_sites, $plas_target_tm, $ins_target_tm, $plas_min_size, $ins_min_size,
+                                          $plas_max_size, $ins_max_size);
+
+    if(isset($output_array['error'])) {
+        $error .=  $output_array['error']."<br />";
+    }
+
+    if($error == "") {
+        $params_array = array( "user_id" => 1,
+                               "plasmid_id" => $project_id,
+                               "plasmid_name" => $output_array['plasmid_name'],
+                               "plasmid_seq" => $output_array["sequence"],
+                               "savvy_markers" => $output_array['savvy_markers'],
+                               "savvy_enzymes" => $output_array["savvy_enzymes"],
+                               "database" => "projects",
+                               "insert_name" => $output_array['insert_name'],
+                               "backbone_database" => $output_array['backbone_database'],
+                               "backbone_id" => $output_array['backbone_id'],
+                               "orig_plasmid_seq" => $output_array['plasmid_sequence'],
+                               "insert_seq" => $output_array['insert_sequence'],
+                               "insert_sites" => $output_array['insert_sites'],
+                               "fwd_primer" => $output_array['fwd_primer_database'],
+                               "rev_primer" => $output_array['rev_primer_database'],
+                               "notes" => $output_array['notes'],
+                               "savvy_meta" => $output_array['savvy_meta'],
+                               "complete" => $output_array['complete'],
+                               "proj_hash" => $proj_hash);
+
+        $plasmid_obj->set_parameters($params_array);
+    }
+}
+
+else {
+    $error .=  "Hmmm... You should probably try getting here from the <a href='index.php'>main page</a>.<br />";
+}
+
 /**********************************Get all the other stuff sorted out********************************************/
-if ($error == "")
-	{
-	$primer_info = primer_info($plasmid_obj->get_parameters("fwd_primer"),$plasmid_obj->get_parameters("rev_primer"),$plasmid_obj->get_parameters("insert_seq"));	
-	$end_plas_size = strlen($plasmid_obj->get_parameters("plasmid_seq"));
-	
-	$pcr_conditions = pcr_conditions($end_plas_size,strlen($plasmid_obj->get_parameters("orig_plasmid_seq")),$primer_info['target_pcr_size']);
-	
-	$savvy_meta_array = explode("-",$plasmid_obj->get_parameters("savvy_meta"));
-	}
+if ($error == "") {
+    $primer_info = primer_info($plasmid_obj->get_parameters("fwd_primer"),
+                               $plasmid_obj->get_parameters("rev_primer"),
+                               $plasmid_obj->get_parameters("insert_seq"));
+
+    $end_plas_size = strlen($plasmid_obj->get_parameters("plasmid_seq"));
+
+    $pcr_conditions = pcr_conditions($end_plas_size,strlen($plasmid_obj->get_parameters("orig_plasmid_seq")),$primer_info['target_pcr_size']);
+
+    $savvy_meta_array = explode("-",$plasmid_obj->get_parameters("savvy_meta"));
+}
 /****************************************************************************************************************/
 
 //Save the temp plasmid if coming from main page, and redirect to project using unique hash identifier
-if ($error == "" && isset($_POST['execute']))
-	{
-	$plasmid_obj->save();
-	//header('Location: http://www.rf-cloning.org/rf_cloning_project.php?proj_id='.$plasmid_obj->get_parameters('proj_hash'));
-	header('Location: http://localhost/rf-cloning/rf_cloning_project.php?proj_id='.$plasmid_obj->get_parameters('proj_hash'));	
-	exit();	
-	}
-
-
-
+if ($error == "" && isset($_POST['execute'])) {
+    $plasmid_obj->save();
+    //echo $plasmid_obj;
+    header('Location: http://www.rf-cloning.org/rf_cloning_project.php?proj_id='.$plasmid_obj->get_parameters('proj_hash'));
+    //header('Location: http://localhost/rf-cloning/rf_cloning_project.php?proj_id='.$plasmid_obj->get_parameters('proj_hash'));
+    exit();
+}
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -163,17 +197,16 @@ if ($error == "" && isset($_POST['execute']))
 <script src="javascript/project.js" language="javascript" type="text/javascript"></script>
 <script src="javascript/javascripts.js" language="javascript" type="text/javascript"></script>
 <script language="javascript" type="text/javascript">
-function complete()
-	{
-	$complete_click.update("project_id=" + document.getElementById('project_id').value + "&complete_check=1","POST");
-	}
+function complete() {
+    $complete_click.update("project_id=" + document.getElementById('project_id').value + "&complete_check=1","POST");
+}
 
-function incomplete()
-	{
-	$complete_click.update("project_id=" + document.getElementById('project_id').value + "&complete_check=0","POST");		
-	}
-</script>       
+function incomplete() {
+    $complete_click.update("project_id=" + document.getElementById('project_id').value + "&complete_check=0","POST");
+}
+</script>
 <link rel="stylesheet" href="includes/styles.css" />
+<script src="javascript/analytics.js" language="javascript" type="text/javascript"></script>
 
 
 </head>
@@ -189,11 +222,10 @@ function incomplete()
 <div id="plasmid_map_display_box" onclick="begindrag(event)" style="cursor:move;"></div>
 <h1>Restriction Free Cloning</h1>
 <?php
-if($error != "")
-	{
-	echo $error."</body></html>";
-	exit();	
-	}
+if($error != "") {
+    echo $error."</body></html>";
+    exit();
+}
 
 ?>
 <div  id='left_body_column'>
@@ -202,10 +234,10 @@ if($error != "")
     <div id="primer_constraint"><u>Forward Primer</u><br />
     Plasmid annealing = <span id='fwd_plas_tm' class="numbers"><?php echo round($primer_info['fwd_plas_tm']); ?>&deg;C</span> &nbsp;&nbsp;&nbsp; Target annealing = <span id='fwd_ins_tm' class="numbers"><?php echo round($primer_info['fwd_ins_tm']); ?>&deg;C</span> &nbsp;&nbsp;&nbsp;Length = <span id='fwd_prim_len' class="numbers"><?php echo $primer_info['fwd_primer_length']; ?></span>
     <div>
-        <div class='bp_control_buttons_left'> 
+        <div class='bp_control_buttons_left'>
           <img class='add_base_rev' onclick="add_basepair(2);"/>
           <img class='sub_base_rev' onclick="sub_basepair(2);"/>
-      	</div>    
+          </div>
         <span class='primer' id='fwd_primer'><?php echo $primer_info['fwd_primer']; ?></span>
         <div class='bp_control_buttons_right'>
           <img class='sub_base_fwd' onclick="sub_basepair(1);"/>
@@ -216,21 +248,21 @@ if($error != "")
     <br />
     <u>Reverse Primer</u><br />
     Plasmid annealing = <span id='rev_plas_tm' class="numbers"><?php echo round($primer_info['rev_plas_tm']); ?>&deg;C</span> &nbsp;&nbsp;&nbsp; Target annealing = <span id='rev_ins_tm' class="numbers"><?php echo round($primer_info['rev_ins_tm']); ?>&deg;C</span> &nbsp;&nbsp;&nbsp;Length =  <span id='rev_prim_len' class="numbers"><?php echo $primer_info['rev_primer_length']; ?></span>
-    
+
     <div id="rev_primer_div">
         <div class='bp_control_buttons_left'>
           <img class='add_base_rev' onclick="add_basepair(4);"/>
           <img class='sub_base_rev' onclick="sub_basepair(4);"/>
         </div>
          <span class='primer' id='rev_primer'><?php echo $primer_info['rev_primer']; ?></span>
-        
+
         <div class='bp_control_buttons_right'>
           <img class='sub_base_fwd' onclick="sub_basepair(3);"/>
           <img class='add_base_fwd' onclick="add_basepair(3);"/>
-        </div>                   
+        </div>
     </div>
     <br />
-    
+
     <div id="no_first_pcr" style="width:483px;"><?php echo $primer_info['no_first_pcr']; ?></div>
     <table cellpadding=4 style="float:left;">
       <tr>
@@ -248,13 +280,13 @@ if($error != "")
                     <img class='sub_base_rev' onclick="shift_insert(2); "/>
                 </div>
                 <span id='insert_sites_span'><?php echo $plasmid_obj->get_parameters("insert_sites"); ?></span>
-                <div class='bp_control_buttons_right' style="width:28px;"> 
+                <div class='bp_control_buttons_right' style="width:28px;">
                     <img class='add_base_rev' onclick="shift_insert(3); "/>
                     <img class='sub_base_rev' onclick="shift_insert(4); "/>
                 </div></td>
             <td style="padding-left:15px;" class="numbers"><?php echo strlen($plasmid_obj->get_parameters("insert_seq")); ?>bps</td>
         </tr>
-    </table>				
+    </table>
     <span id="insert_shift_alert"></span>
     <br />
     <table>
@@ -273,14 +305,14 @@ if($error != "")
         </tr>
     </table>
     <br />
-    <u>New construct</u> 
+    <u>New construct</u>
     <br />
     <span style='background-color:#09F;border:solid black thin;font-size:9pt;color:#09F;'>ATGC</span> = Original plasmid sequence. <span style='background-color:#6F3;border:solid black thin;font-size:9pt;color:#6F3;'>ATGC</span> = Inserted sequence.
     <br /><br />
     <div id="new_construct">
     <?php echo $plasmid_obj->build_construct(); ?></div>
 </div>
-    
+
     <br />
 
 <table>
@@ -313,7 +345,7 @@ if($error != "")
         <td>
         <div id="saved_alert"></div>
         </td>
-    </tr>	
+    </tr>
 </table>
 <div id='right_column'>
         <u><?php echo date("M d Y"); ?></u><br /><br />
@@ -324,15 +356,17 @@ if($error != "")
             <li><a href='savvy.php'><span>Savvy</span></a></li>
             <li><a href='QandA.php' target="_blank"><span>Q & A</span></a></li>
             <li><a href='soap_server.php'><span>SOAP</span></a></li>
+            <li><a href='fluxbb/index.php'><span>Forum</span></a></li>
             <li><a href="login.php"><span><?php if($login_status == "true") echo "Log out"; else echo "Log in/Register";  ?></span></a></li>
         </ul>
     </div>
     <br /><br />
-        <h3>Plasmid markers and restriction enzymes:</h3>			
-        <form name="savvy_form" action="/cgi-bin/savvy.cgi" target="_blank" method="post">					
-            <textarea name='markers' id='markers' rows='10' cols='50' onfocus='clear_save_alert()' onkeypress="activate_save();"><?php echo $plasmid_obj->get_parameters("savvy_markers"); ?></textarea> <img class='help' src="images/help.png" onclick="help_file(5);" /><br />
-            <input type="button" onclick="	document.getElementById('markers').value = 'Blasting Sequence...';
-            								activate_save();
+        <h3>Plasmid markers and restriction enzymes:</h3>
+        <form name="savvy_form" action="/cgi-bin/savvy.cgi" target="_blank" method="post">
+            <textarea name='markers' id='markers' rows='10' cols='50' onfocus='clear_save_alert()' onkeypress="activate_save();">
+                <?php echo $plasmid_obj->get_parameters("savvy_markers"); ?></textarea> <img class='help' src="images/help.png" onclick="help_file(5);" /><br />
+            <input type="button" onclick="    document.getElementById('markers').value = 'Blasting Sequence...';
+                                            activate_save();
                                             var $sequence = document.getElementById('sequence').value;
                                             var $params = 'sequence=' + $sequence;
                                             $blast_features.update($params,'POST')" id="blast_features" name="blast_features" value="Auto Find Markers" />
@@ -343,8 +377,8 @@ if($error != "")
             <input type='hidden' name='line_thickness' id='line_thickness' value='0.5' />
             <input type='hidden' name='shape' id='shape' value='circular' />
             <input type='hidden' name='plasmid_size' id='plasmid_size' value=<?php echo $end_plas_size; ?> />
-            <input type="button" onclick="	document.getElementById('enzymes').value = 'Digesting...';
-            								activate_save();
+            <input type="button" onclick="    document.getElementById('enzymes').value = 'Digesting...';
+                                            activate_save();
                                             var $sequence = document.getElementById('sequence').value;
                                             var $cut_num = document.getElementById('cut_num').value;
                                             var $params = 'sequence=' + $sequence + '&cut_num=' + $cut_num;
@@ -359,12 +393,12 @@ if($error != "")
             <input type="button" id='export_gbfile' onclick='gbfile()' value='Export' style="margin-top:4px;" />
             <input type="button" id="align_result" onclick="prep_alignment()" value="Align Sequencing Results" style="float:right;margin-top:4px;" />
         </form>
-    
+
     <br />
     <div>Add notes here<br />
 <textarea name='notes' id='notes' cols='50' rows='10' value='<?php echo $plasmid_obj->get_parameters("notes"); ?>' onfocus='clear_save_alert()' onkeypress="activate_save();"><?php echo $plasmid_obj->get_parameters("notes"); ?></textarea>
 </div><br />
-<div style='position:absolute; left:450px; top:150px;'>											
+<div style='position:absolute; left:450px; top:150px;'>
         <?php if ($login_status == "true"){ ?>
         <input type='button' id='project_complete' value='Complete' <?php print (($plasmid_obj->get_parameters("complete") == 0) && ($plasmid_obj->get_parameters('user_id') != 1) ? "" : "disabled=disabled"); ?> onclick="complete();" />
         <input type='button' id='project_incomplete' value='Incomplete' <?php  print (($plasmid_obj->get_parameters("complete") == 1) && ($plasmid_obj->get_parameters('user_id') != 1) ? "" : "disabled=disabled"); ?> onclick="incomplete();"> <img class='help' src="images/help.png" onclick="help_file(7);" style="float:right" />
@@ -381,5 +415,5 @@ if($error != "")
     <input type="hidden" id="name_export" name="name_export" value="name" />
 </form>
 <?php include("includes/footer.php"); ?>
-</body></html>	
-   
+</body></html>
+

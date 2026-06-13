@@ -2,7 +2,7 @@
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -17,10 +17,10 @@ function retrieve_saved($project_id)
 	{	
 	include_once("savvy_ouput.php");
 	
-	$construct_info_array = ($project_id == "nothing") ? false : mysql_fetch_assoc(mysql_query("SELECT * FROM projects WHERE plasmid_id = ".$project_id.";"));
+	$construct_info_array = ($project_id == "nothing") ? false : mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM projects WHERE plasmid_id = ".$project_id.";"));
 	
 	
-	$backbone_name = mysql_fetch_row(mysql_query("SELECT plasmid_name FROM ".$construct_info_array['backbone_database']." WHERE plasmid_id = ".$construct_info_array['backbone_id'].";"));
+	$backbone_name = mysqli_fetch_row(mysqli_query($conn, "SELECT plasmid_name FROM ".$construct_info_array['backbone_database']." WHERE plasmid_id = ".$construct_info_array['backbone_id'].";"));
 	
 	$target = $construct_info_array['insert_sequence'];
 

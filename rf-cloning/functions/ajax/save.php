@@ -2,7 +2,7 @@
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -25,9 +25,8 @@ $new_save = $php_plasmid->user_id == 1 ? true : false;
 
 $php_plasmid->user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 1;
 
-$plasmid = new Plasmid();
+$plasmid = new Plasmid($conn);
 $plasmid->set_parameters(get_object_vars($php_plasmid));
-
 
 $save_result = $plasmid->save();
 if (is_int($save_result))

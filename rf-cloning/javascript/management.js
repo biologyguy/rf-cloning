@@ -2,7 +2,7 @@
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -13,7 +13,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #*************************************************************************************************/
-
 var $draw_plasmid = new ajaxObject("/cgi-bin/savvy.cgi",draw_plasmid);
 	
 function draw_plasmid(responseText, responseStatus, responseXML)
@@ -42,7 +41,8 @@ function draw_plasmid(responseText, responseStatus, responseXML)
 		$print.click(function() 
 						{
 						var $plas_sequence = document.getElementById('plasmid_sequence').value.replace(/>.+/g,"");
-						$plas_sequence = $plas_sequence.replace(/[^ATUCGatucg]/g,"");
+						$plas_sequence = $plas_sequence.toUpperCase();
+						$plas_sequence = $plas_sequence.replace(/[^ATUCG]/g,"");
 						document.getElementById('plasmid_size').value = $plas_sequence.length; 	
 						document.savvy_form.submit()
 						});
@@ -69,10 +69,15 @@ function saveEdits()
 	{
 	var $js_plasmid = JSON.parse(document.getElementById('plasmid_obj').value); 
 	
-	var $plas_sequence = document.getElementById('plasmid_sequence').value.replace(/[^ATUCGatucg]/g,"");
-	$plas_sequence = $plas_sequence.toUpperCase();
+	var $plas_sequence = document.getElementById('plasmid_sequence').value.toUpperCase();
+	$plas_sequence = $plas_sequence.replace(/[^ATUCG]/g,"");
 	
 	$js_plasmid['plasmid_seq'] = $plas_sequence;
+	if ($js_plasmid['plasmid_id'] === "new") {
+		new_backbone();
+		return;
+	}
+
 	if((md5($plas_sequence) != $js_plasmid['checksum']) && (document.getElementById('project_id').value != "new"))
 		{
 		var $confirm = 	confirm('You are about to modify the plasmid sequence. Plasmid feature positions will not be automatically updated, so you may want to manually make the changes or use the auto-find functions before saving. Do you wish to continue?');
@@ -89,9 +94,10 @@ function saveEdits()
 		$js_plasmid['savvy_markers'] = $js_plasmid['savvy_markers'].replace(/\n+/g,"\\n");
 		$js_plasmid['savvy_enzymes'] = trim(document.getElementById('enzymes').value.replace(/["'&<>(){};\r\t\n\\]/g,""));
 		$js_plasmid['privacy'] = (document.getElementById('privacy').checked) ? 1 : 0;
-			
+
 		$post_parameters = 'plasmid_obj='+JSON.stringify($js_plasmid);
-		$save_project.update($post_parameters,'POST');	
+
+		$save_project.update($post_parameters,'POST');
 		}
 	}
 
@@ -147,8 +153,8 @@ function delete_backbone_ajax(responseText, responseStatus)
 function get_project()
 	{
 	var $proj_hash = document.getElementById('proj_hash').value;
-	document.getElementById('projects_form').action = "http://localhost/rf-cloning/rf_cloning_project.php?proj_id=" + $proj_hash; 
-	//document.getElementById('projects_form').action = "http://www.rf-cloning.org/rf_cloning_project.php?proj_id=" + $proj_hash; 
+	//document.getElementById('projects_form').action = "http://localhost/rf-cloning/rf_cloning_project.php?proj_id=" + $proj_hash; 
+	document.getElementById('projects_form').action = "http://www.rf-cloning.org/rf_cloning_project.php?proj_id=" + $proj_hash; 
 	document.projects_form.submit();
 	}
 
@@ -200,7 +206,8 @@ function new_backbone()
 	$markers = $markers.replace(/\n+/g,"\\n");
 	var $enzymes = document.getElementById('enzymes').value.replace(/["'&<>(){};\t\n\r\\]/g,'');
 	var $plasmid_name = document.getElementById('plasmid_name').value.replace(/["'&<>(){};\s\\]/g,'');
-	if ($plasmid_name == "")
+
+	if ($plasmid_name === "" || $plasmid_name === 'Unnamed')
 		{ 
 		alert('Please give your new plasmid a name!');
 		return;
@@ -229,18 +236,15 @@ function confirm_new_backbone()
 	
 /**************************************************************************/
 var $add_backbone = new ajaxObject("functions/ajax/add_backbone.php",add_backbone);
-function add_backbone(responseText, responseStatus)
-	{
-	if(responseStatus == 200)
-		{
-		if (responseText != "")
-			{
-			document.getElementById('saved_alert').innerHTML = responseText; 	
+function add_backbone(responseText, responseStatus) {
+	if(responseStatus === 200) {
+		if (responseText !== "") {
+			document.getElementById('saved_alert').innerHTML = responseText;
 			}
 		else
 			{
-			location.reload(true); 
-			} 
+			location.reload(true);
+			}
 		}
 	}
 
@@ -249,7 +253,8 @@ function redrawing()
 	{	
 	setTimeout(function(){document.getElementById('plasmid_map_display_box').innerHTML = "<div style='height:600px; width:490px; text-align:center; margin-top:150px;'><img src='images/loading.gif' /></div>";},1);
 	var $sequence = document.getElementById('plasmid_sequence').value.replace(/>.+/g,'');
-	$sequence = $sequence.replace(/[^ATUGCatugc]/g,'');
+	$sequence = $sequence.toUpperCase();
+	$sequence = $sequence.replace(/[^ATUGC]/g,'');
 	var $markers = document.getElementById('markers').value;
 	var $enzymes = document.getElementById('enzymes').value;
 	var $plasmid_name = document.getElementById('plasmid_name').value; 
@@ -324,7 +329,8 @@ function save_backbone_edit($database)
 		$markers = $markers.replace(/\n+/g,"\\n");
 		var $enzymes = trim(document.getElementById('enzymes').value.replace(/["'&<>(){};\r\t\n\\]/g,""));
 		var $sequence = document.getElementById('plasmid_sequence').value.replace(/>.+/g,'');
-		$sequence = $sequence.replace(/[^ATUGCatugc]/g,'');
+		$sequence = $sequence.toUpperCase();
+		$sequence = $sequence.replace(/[^ATUGC]/g,'');
 		var $user_id = getCookie("user_id");
 		var $session_check = getCookie("session_check");
 		var $paramaters = 'markers=' + $markers + '&enzymes=' + $enzymes + '&sequence=' + $sequence + '&user_id=' + $user_id + '&session_check=' + $session_check + '&plasmid_id=' + $plasmid_id + '&plasmid_name=' + $plasmid_name + '&database=' + $database;

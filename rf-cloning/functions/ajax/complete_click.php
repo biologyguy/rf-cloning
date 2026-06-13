@@ -2,7 +2,7 @@
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -22,7 +22,7 @@ if ($_POST['project_id'] == "new")
 
 else
 	{
-	mysql_query("UPDATE projects SET complete=".$_POST['complete_check']." WHERE plasmid_id=".$_POST['project_id'].";");
+	mysqli_query($conn, "UPDATE projects SET complete=".$_POST['complete_check']." WHERE plasmid_id=".$_POST['project_id'].";");
 	echo $_POST['complete_check'];
 	}
 ?>

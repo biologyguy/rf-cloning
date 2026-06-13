@@ -1,8 +1,8 @@
-<?php 
+<?php
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -13,7 +13,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #*************************************************************************************************/
-require_once('includes/db_connect.php');
+require_once('../includes/rf-cloning/db_connect.php');
 
 include("functions/set_session.php");	
 
@@ -68,13 +68,14 @@ var $email = new ajaxObject("functions/ajax/email.php",get_email)
 
 function get_email(responseText, responseStatus)
 	{
-	if (responseStatus == 200)
+	if (responseStatus == 200 && document.getElementById('email1'))
 		{			
-		document.getElementById('email1').innerHTML = responseText + "send me an email</a>";
+		document.getElementById('email1').innerHTML = responseText + "email me</a>";
 		}
 	}
 	
 </script>
+<script src="javascript/analytics.js" language="javascript" type="text/javascript"></script>
 </head>
 
 <?php
@@ -96,8 +97,9 @@ include("functions/get_projects_menu.php");
             <?php 	$login_status = isset($login_status) ? $login_status : "false";
 					if($login_status == "true") echo "<li><a href='plasmid_management.php'><span>Manage plasmids</span></a></li>"; ?>
         	<li><a href='savvy.php'><span>Savvy</span></a></li>
-            <li><a href='QandA.php' target="_blank"><span>Q & A</span></a></li>
+            <li><a href='QandA.php' target="_blank"><span>Q &amp; A</span></a></li>
             <li><a href='soap_server.php'><span>SOAP</span></a></li>
+            <li><a href='fluxbb/index.php'><span>Forum</span></a></li>
             <li><a href="login.php"><span><?php if($login_status == "true") echo "Log out"; else echo "Log in/Register";  ?></span></a></li>
         </ul>
     </div>
@@ -107,10 +109,9 @@ include("functions/get_projects_menu.php");
  <br />
 
 <form method="post" action="rf_cloning_project.php" name="rf_cloning">
-<!--<h3>Site updated</h3> Mar 19th: Well, I submitted a manuscript to Nucleic Acids Research, and they didn't reject it! The reviewers asked for a few more things though, so I've been updating the site in a caffeine fueled flurry. I really hope I haven't introduced any new bugs (although I definitely did clean up a few), but if you notice something not working like you think it should, PLEASE PLEASE PLEASE <span id="email1">send me an email</span> to let me know! Seriously, I'd rather get 15 emails about the same issue then get 0 emails. Thanks to everyone that has been using the site, I hope it continues to be helpful.<br />
--Steve  
-<br />-->
-<br />
+<!--<h3>Announcement: [DATE]</h3>
+ Make an announcement and tell folks to <span id="email1">email me</span>
+<br /> -->
 <table>
     <tr>
     	<td>Backbone name:</td>
@@ -146,10 +147,10 @@ include("functions/get_projects_menu.php");
     <select name="plasmid_list" id="plasmid_list" onChange="plasmid_focus(this.options[this.selectedIndex].value,'plasmids')">
     	<option value='nothing' > ---------- Your Plasmids ---------- </option>
 		<?php 
-		$plasmids_query = mysql_query("SELECT * FROM plasmids WHERE user_id = ".$_SESSION['user_id']." ORDER BY plasmid_name;");
+		$plasmids_query = mysqli_query($conn, "SELECT * FROM plasmids WHERE user_id = ".$_SESSION['user_id']." ORDER BY plasmid_name;");
 		$plasmids_array = array();
 		
-		while ($row = mysql_fetch_assoc($plasmids_query))
+		while ($row = mysqli_fetch_assoc($plasmids_query))
 			{
 			array_push($plasmids_array,$row);	
 			}
@@ -162,10 +163,10 @@ include("functions/get_projects_menu.php");
    		
 		echo "<option value='nothing' > --------- Popular Plasmids --------- </option>";
 		
-		$plasmids_query = mysql_query("SELECT * FROM plasmids WHERE privacy = 1 AND user_id != ".$_SESSION['user_id']." ORDER BY popularity DESC;");
+		$plasmids_query = mysqli_query($conn, "SELECT * FROM plasmids WHERE privacy = 1 AND user_id != ".$_SESSION['user_id']." ORDER BY popularity DESC;");
 		$plasmids_array = array();
 		
-		while ($row = mysql_fetch_assoc($plasmids_query))
+		while ($row = mysqli_fetch_assoc($plasmids_query))
 			{
 			array_push($plasmids_array,$row);	
 			}
@@ -189,13 +190,13 @@ else
 	<select name="plasmid_list" id="plasmid_list" onChange="plasmid_focus(this.options[this.selectedIndex].value,'plasmids','index')">
     	<option value='nothing' > --------- Popular Plasmids --------- </option>
 		<?php
-		$plasmids_query = mysql_query("SELECT * FROM plasmids WHERE privacy = 1 ORDER BY popularity DESC;");
+		$plasmids_query = mysqli_query($conn, "SELECT * FROM plasmids WHERE privacy = 1 ORDER BY popularity DESC;");
 
 		$plasmids_array = array();
 		
 		$counter = 0;
 		
-		while (($row = mysql_fetch_assoc($plasmids_query)) && ($counter < 40))
+		while (($row = mysqli_fetch_assoc($plasmids_query)) && ($counter < 40))
 			{
 			array_push($plasmids_array,$row);
 			$counter++;	
@@ -219,7 +220,7 @@ else
     </div>  
     
 <br />
-<textarea id='plasmid_sequence' name='plasmid_sequence' rows=8 cols=90 wrap='no' style='font-size:9pt;'></textarea> <img class='help' src="images/help.png" onclick="help_file(3);" /><br />
+<textarea id='plasmid_sequence' name='plasmid_sequence' rows=8 cols=90 wrap='no' style="font-size:9pt; font-family:'Courier New', Courier, monospace"></textarea> <img class='help' src="images/help.png" onclick="help_file(3);" /><br />
 <div style="width:673px;"> 
 <input type="button" value="remove FASTA" style="margin-right:1px;"
 	onClick="this.form.plasmid_sequence.value=this.form.plasmid_sequence.value.replace(/>.+[\r\n]/g,'')">
@@ -256,7 +257,7 @@ else
 </div>
 <br />
 <b><span style="font-size:20px;">Insert Sequence</span></b><br />
-<textarea name='target_sequence' id='target_sequence' rows=8 cols=90 wrap="no" style="font-size:9pt;"></textarea>  <img class='help' src="images/help.png" onclick="help_file(2);" /><br />
+<textarea name='target_sequence' id='target_sequence' rows=8 cols=90 wrap="no" style="font-size:9pt; font-family:'Courier New', Courier, monospace"></textarea>  <img class='help' src="images/help.png" onclick="help_file(2);" /><br />
 <input type="button" value="remove FASTA" style="margin-right:1px;"
 	onClick="this.form.target_sequence.value=this.form.target_sequence.value.replace(/>.+[\n\r]/g,'')">
 <input type="button" value="remove line breaks" style="margin-right:1px;"
@@ -292,7 +293,7 @@ else
 <input type="hidden" name="plasmid_max_length" id="plasmid_max_length" value="35" />
 <input type="hidden" name="insert_max_length" id="insert_max_length" value="25" />
  
-<input type="hidden" name="backbone_id" id="backbone_id" value="blank" />
+<input type="hidden" name="backbone_id" id="backbone_id" value="0" />
 <input type="hidden" name="database" id="database" value="" />
 <input type="button" name="clear" value="Clear form" onclick="clear_form()" style="float:left; margin-right:6px;" />
 <input type="submit" name="execute" value="  Run!  " style="float:left" />

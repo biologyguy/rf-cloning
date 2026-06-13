@@ -2,7 +2,7 @@
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -100,25 +100,24 @@ switch($_POST['primer_dir_code'])
 	
 	}
 
+$pcr_conditions = pcr_conditions(strlen($plasmid_array[0].$_POST['insert_seq'].$plasmid_array[2]),strlen($_POST['plasmid_seq']),$primer_info['target_pcr_size']);
 
-	$pcr_conditions = pcr_conditions(strlen($plasmid_array[0].$_POST['insert_seq'].$plasmid_array[2]),strlen($_POST['plasmid_seq']),$primer_info['target_pcr_size']);
-
-	$output['fwd_primer'] = $primer_info['fwd_primer'];
-	$output['fwd_ins_tm'] = $primer_info['fwd_ins_tm'];	
-	$output['fwd_plas_tm'] = $primer_info['fwd_plas_tm'];
-	$output['fwd_prim_len'] = $primer_info['fwd_primer_length'];
-	$output['fwd_primer_database'] = $fwd_primer_database;
-	$output['rev_primer'] = $primer_info['rev_primer'];
-	$output['rev_ins_tm'] = $primer_info['rev_ins_tm'];	
-	$output['rev_plas_tm'] = $primer_info['rev_plas_tm'];
-	$output['rev_prim_len'] = $primer_info['rev_primer_length'];
-	$output['rev_primer_database'] = $rev_primer_database;
-	$output['pcr_prod_size'] = $primer_info['target_pcr_size'];
-	$output['extension_time'] = $pcr_conditions['extension_time_mins'];
-	$output['ng_insert'] = $pcr_conditions['ng_of_insert'];
-	$output['ng_plasmid'] = $pcr_conditions['ng_of_plasmid'];
-	$output['primer_dir_code'] = $_POST['primer_dir_code'];
-	$output['no_first_pcr'] = $primer_info['no_first_pcr'];
+$output['fwd_primer'] = $primer_info['fwd_primer'];
+$output['fwd_ins_tm'] = $primer_info['fwd_ins_tm'];
+$output['fwd_plas_tm'] = $primer_info['fwd_plas_tm'];
+$output['fwd_prim_len'] = $primer_info['fwd_primer_length'];
+$output['fwd_primer_database'] = $fwd_primer_database;
+$output['rev_primer'] = $primer_info['rev_primer'];
+$output['rev_ins_tm'] = $primer_info['rev_ins_tm'];
+$output['rev_plas_tm'] = $primer_info['rev_plas_tm'];
+$output['rev_prim_len'] = $primer_info['rev_primer_length'];
+$output['rev_primer_database'] = $rev_primer_database;
+$output['pcr_prod_size'] = $primer_info['target_pcr_size'];
+$output['extension_time'] = $pcr_conditions['extension_time_mins'];
+$output['ng_insert'] = $pcr_conditions['ng_of_insert'];
+$output['ng_plasmid'] = $pcr_conditions['ng_of_plasmid'];
+$output['primer_dir_code'] = $_POST['primer_dir_code'];
+$output['no_first_pcr'] = $primer_info['no_first_pcr'];
 
 echo json_encode($output);
 

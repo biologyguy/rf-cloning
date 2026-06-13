@@ -1,0 +1,18 @@
+.heading{ font-size: 16pt; font-weight:bold;font-family:Verdana, Arial, Helvetica, Sans-Serif; color:#cc0000}
+.body { font-size: 8.5pt; line-height: 12.5pt; font-family: Verdana, Arial, Helvetica, Sans-Serif }
+.menuitem { color: #cc0000; font-size: 7.5pt; font-family: Verdana, Arial, Sans-Serif }
+.optiontitle { font-weight: bold; font-size: 7.5pt; font-family: Verdana, Arial, Sans-serif }
+.size1 { font-size: 8pt; font-family: Verdana, Arial, Sans-Serif }
+.size2 { font-size: 9pt; font-family: Verdana, Arial, Sans-Serif }
+.size3 { font-size: 10pt; font-family: Verdana, Arial, Sans-Srif }
+form { font-size: 7.5pt; font-family: Verdana, Arial, Sans-serif }
+input { font-size: 7.5pt; font-family: Verdana, Arial, sans-serif }
+select { font-size: 7.5pt; font-family: Verdana, Arial, Sans-serif }
+a {color:#cc0000}
+.optionlist { position: absolute; z-index: 10; top: 250px; left: 15px; width: 624px; height: 436px; visibility:visible }
+.description {position: absolute; z-index: 1; top :100px; left:550px; width:204 px; visibility:hidden }
+#programbanner { position: absolute; top: 0px; left: 550px; visibility: visible }
+#result { position: absolute; top: 0px; left: 0px; visibility: hidden }
+#sewer { position: absolute; z-index: 1; top: 520px; left:550px;}
+.menudiv { color: #ffffff; font-size: 7.5pt; font-family: Verdana, Arial, Sans-Serif; position: absolute; top: 240px; left: 15px; width: 135px; height: 100px; visibility: hidden }
+		

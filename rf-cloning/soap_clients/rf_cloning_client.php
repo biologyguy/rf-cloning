@@ -4,7 +4,7 @@
 * This class is intended to assist in the creation of SOAP requests to http://www.rf-cloning.org.
 * The WSDL file can be accessed at http://www.rf-cloning.com/classes/rf_cloning.wsdl
 *
-* Copyright (C) 2009-2014 Steve Bond
+* Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License version 3 as published by

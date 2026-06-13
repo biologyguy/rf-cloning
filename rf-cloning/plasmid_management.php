@@ -1,8 +1,8 @@
-<?php 
+<?php
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -13,8 +13,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #*************************************************************************************************/
-
-require_once('includes/db_connect.php');
+require_once('../includes/rf-cloning/db_connect.php');
 include("functions/set_session.php");
 ?>
 
@@ -29,6 +28,7 @@ include("functions/set_session.php");
 <script src="javascript/ajax.js" language="javascript" type="text/javascript"></script>
 <script src="javascript/javascripts.js" language="javascript" type="text/javascript"></script>
 <script src="javascript/management.js" language="javascript" type="text/javascript"></script>
+<script src="javascript/analytics.js" language="javascript" type="text/javascript"></script>
 <link rel="stylesheet" href="includes/styles.css" />
 
 </head>
@@ -47,8 +47,9 @@ if ($login_status == "false")
         <ul>
             <li><a href='index.php'><span>Home</span></a></li>
             <li><a href='savvy.php'><span>Savvy</span></a></li>
-            <li><a href='QandA.php' target="_blank"><span>Q & A</span></a></li>
+            <li><a href='QandA.php' target="_blank"><span>Q &amp; A</span></a></li>
             <li><a href='soap_server.php'><span>SOAP</span></a></li>
+            <li><a href='fluxbb/index.php'><span>Forum</span></a></li>
             <li><a href="login.php"><span>Log out</span></a></li>
         </ul>
     </div>
@@ -62,17 +63,21 @@ if ($login_status == "false")
 	<tr>
     	<th>Plasmid Backbones</th>
    		<th>Projects</th>
-    	<th rowspan="2"><input type="button" value="Add New Backbone" onclick="document.getElementById('plasmid_list').value = 'nothing'; document.getElementById('projects_list').value = 'nothing'; document.getElementById('plasmid_map_display_box').innerHTML = ''; $info_display.update();" /></th>
+    	<th rowspan="2">
+            <input type="button" value="Add New Backbone" onclick="document.getElementById('plasmid_list').value = 'nothing';
+                                                                   document.getElementById('projects_list').value = 'nothing';
+                                                                   document.getElementById('plasmid_map_display_box').innerHTML = '';
+                                                                   $info_display.update();" /></th>
     </tr>
     <tr>
 <td>
             <select name="plasmid_list" id="plasmid_list" onChange="plasmid_focus(this.options[this.selectedIndex].value,'plasmids')">
             <option value='nothing' > -------------- Plasmids -------------- </option>
             <?php 
-            $plasmids_query = mysql_query("SELECT * FROM plasmids WHERE user_id = ".$_COOKIE['user_id']." ORDER BY plasmid_name;");
+            $plasmids_query = mysqli_query($conn, "SELECT * FROM plasmids WHERE user_id = ".$_COOKIE['user_id']." ORDER BY plasmid_name;");
             $plasmids_array = array();
             
-            while ($row = mysql_fetch_assoc($plasmids_query))
+            while ($row = mysqli_fetch_assoc($plasmids_query))
                 {
                 array_push($plasmids_array,$row);	
                 }
@@ -86,10 +91,10 @@ if ($login_status == "false")
 			
 			echo "<option value='nothing' > --------- Popular Plasmids --------- </option>";
 		
-			$plasmids_query = mysql_query("SELECT * FROM plasmids WHERE privacy = 1 AND user_id != ".$_SESSION['user_id']." ORDER BY popularity DESC;");
+			$plasmids_query = mysqli_query($conn, "SELECT * FROM plasmids WHERE privacy = 1 AND user_id != ".$_SESSION['user_id']." ORDER BY popularity DESC;");
 			$plasmids_array = array();
 			
-			while ($row = mysql_fetch_assoc($plasmids_query))
+			while ($row = mysqli_fetch_assoc($plasmids_query))
 				{
 				array_push($plasmids_array,$row);	
 				}
@@ -111,10 +116,10 @@ if ($login_status == "false")
             <option value='nothing' > --------Projects in progress-------- </option>
     
 				<?php
-                $plasmids_query = mysql_query("SELECT * FROM projects WHERE user_id = ".$_COOKIE['user_id']." AND complete = 0 ORDER BY plasmid_name;");
+                $plasmids_query = mysqli_query($conn, "SELECT * FROM projects WHERE user_id = ".$_COOKIE['user_id']." AND complete = 0 ORDER BY plasmid_name;");
                 $plasmids_array = array();	
                 
-                while ($row = mysql_fetch_assoc($plasmids_query))
+                while ($row = mysqli_fetch_assoc($plasmids_query))
                     {
                     array_push($plasmids_array,$row);	
                     }
@@ -128,10 +133,10 @@ if ($login_status == "false")
                 echo "<option value='nothing' > ---------Completed projects--------- </option>
                 ";
             
-                $plasmids_query = mysql_query("SELECT * FROM projects WHERE user_id = ".$_COOKIE['user_id']." AND complete = 1 ORDER BY plasmid_name;");
+                $plasmids_query = mysqli_query($conn, "SELECT * FROM projects WHERE user_id = ".$_COOKIE['user_id']." AND complete = 1 ORDER BY plasmid_name;");
                 $plasmids_array = array();
                 
-                while ($row = mysql_fetch_assoc($plasmids_query))
+                while ($row = mysqli_fetch_assoc($plasmids_query))
                     {
                     array_push($plasmids_array,$row);	
                     }
@@ -160,6 +165,7 @@ $lablife_file = file_get_contents("http://www.lablife.org/p?a=vdb&query=".$plasm
 
 <div id="plasmid_map_display_box" style="position:absolute; left:20px; top:200px;"></div>
 <div id="plasmid_edit_div" style="position:absolute; left:625px; top:200px;"></div>
+<div id="foobar" style="width: 500px;"></div>
 <div style="position:absolute; left:500px; top:900px;"><?php include("includes/footer.php"); ?></div>
 </body>
 </html>

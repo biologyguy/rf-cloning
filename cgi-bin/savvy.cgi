@@ -1,5 +1,5 @@
-#!/usr/bin/perl 
-#use lib '/usr/lib/cgi-bin';
+#!/usr/bin/perl -wT
+use lib '/usr/lib/cgi-bin';
 use SVGPlasmid;
 use CGI qw(:standard);
 use CGI::Carp qw( fatalsToBrowser );
@@ -36,7 +36,7 @@ if ($enzymes)
 
 	for(my $i=0; $i<@pairs ; $i++)
 		{
-		(@n[$i], @p[$i]) = split(" ", $pairs[$i]);
+		($n[$i], $p[$i]) = split(" ", $pairs[$i]);
 		$multi_array[$i][0] = $p[$i]; 
 		$multi_array[$i][1] = $n[$i]; 
 		}
@@ -65,18 +65,27 @@ my $markers			= param("markers"); #Get Input
 if ($markers){
 	my @marker_lines	= split("\n", $markers); #Split to lines
 
-	foreach my $marker_lines(@marker_lines){
-		my ($name, $start, $end, $arrow, $style, $color, $thickness)
+foreach my $marker_lines(@marker_lines){
+    my ($name, $start, $end, $arrow, $style, $color, $thickness)
 			= split(" ", $marker_lines);
-		print $myplasmid->_draw_markers(
-			NAME		=>	$name, 
-			START		=>	$start, 
-			END			=>	$end, 
-			ARROW		=> 	$arrow,
-			STYLE		=>	$style,
-			COLOR		=>	$color,
-			THICKNESS	=>	$thickness);
 
+		# Skip malformed lines that don't have all 7 fields
+		unless (defined $name && defined $start && defined $end &&
+				defined $arrow && defined $style && defined $color &&
+				defined $thickness &&
+				$start =~ /^\d+$/ && $end =~ /^\d+$/) {
+			warn "MARKER SKIP: malformed line: $marker_lines\n";
+			next;
+		}
+
+		print $myplasmid->_draw_markers(
+			NAME      => $name,
+			START     => $start,
+			END       => $end,
+			ARROW     => $arrow,
+			STYLE     => $style,
+			COLOR     => $color,
+			THICKNESS => $thickness);
 	}
 }
 ######## END MARKERS #######

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -wT 
 use CGI qw(:standard);
 use CGI::Carp qw( fatalsToBrowser );
 use strict; 
@@ -10,7 +10,8 @@ my @RESTRICTION_SITES = ("AatII:GACGTC", "AbsI:CCTCGAGG", "Acc65I:GGTACC", "AciI
 my $sequence = param("sequence");
 my $cut_num = param("cut_num");
 
-$sequence =~ s/[^ATGCatcg]//g;
+$sequence = uc($sequence);
+$sequence =~ s/[^ATGC]//g;
 my $counter = 0;
 my @enzyme_list_array;
 my $enzyme_list;

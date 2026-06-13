@@ -2,7 +2,7 @@
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -13,8 +13,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #*************************************************************************************************/
-
-require_once('includes/db_connect.php');
+require_once('../includes/rf-cloning/db_connect.php');
 
 if(isset($_COOKIE['user_id']))
 	{
@@ -50,6 +49,7 @@ function sample_data()
 
 
 <link rel="stylesheet" href="includes/styles.css" />
+<script src="javascript/analytics.js" language="javascript" type="text/javascript"></script>
 </head>
 
 <body>
@@ -59,14 +59,15 @@ $name = "value='Unnamed' onfocus='clearDefault(this);'";
 $markers = "";
 $enzymes = "";
 ?>
-<div style="width:720px;">
+<div style="width:780px;">
     <div class="tabs">
         <ul>
             <li><a href='index.php'><span>Home</span></a></li>
 			<?php 	$login_status = isset($login_status) ? $login_status : "false";
 					if($login_status == "true") echo "<li><a href='plasmid_management.php'><span>Manage plasmids</span></a></li>"; ?>
-            <li><a href='QandA.php' target="_blank"><span>Q & A</span></a></li>
+            <li><a href='QandA.php' target="_blank"><span>Q &amp; A</span></a></li>
 			<li><a href='soap_server.php'><span>SOAP</span></a></li>
+			<li><a href='fluxbb/index.php'><span>Forum</span></a></li>
             <li><a href="login.php"><span><?php if($login_status == "true") echo "Log out"; else echo "Log in/Register";  ?></span></a></li>
         </ul>
     </div>

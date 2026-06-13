@@ -1,23 +1,26 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w 
 use CGI qw(:standard);
 use CGI::Carp qw( fatalsToBrowser );
 use strict;
-use Bio::Seq;
 use Bio::Perl;
 use Bio::SearchIO;
 use Fcntl;
+use Bio::Seq;
+
+delete @ENV{qw(IFS CDPATH ENV BASH_ENV)}; # Make %ENV safer
+
 print "Content-type: text/html\n\n";
 
 my $sequence = param("sequence");
 $sequence =~ s/[^ATGCatcg]//g;
 
-my $temp_path = "c:/wamp/cgi-bin/temp_files/";
-my $blast_bin_path = "c:/wamp/cgi-bin/blast/bin/blastn";
-my $common_feats_path = "c:/wamp/cgi-bin/common_features_db/common_features";
+#my $temp_path = "c:/wamp/cgi-bin/temp_files/";
+#my $blast_bin_path = "c:/wamp/cgi-bin/blast/bin/blastn";
+#my $common_feats_path = "c:/wamp/cgi-bin/common_features_db/common_features";
 
-#my $temp_path = "usr/lib/cgi-bin/temp_files/";
-#my $blast_bin_path = "usr/bin/blastn";
-#my $common_feats_path = "usr/lib/cgi-bin/common_features_db/common_features";
+my $temp_path = "/usr/lib/cgi-bin/temp_files/";
+my $blast_bin_path = "/usr/bin/blastn";
+my $common_feats_path = "/usr/lib/cgi-bin/common_features_db/common_features";
 
 my $rand_num = int(rand(1000000000));
 my $sequence_obj = Bio::Seq->new(-seq => $sequence, -alphabet => 'dna', -is_circular => 1 );
@@ -43,11 +46,12 @@ while( my $result = $in->next_result )
 		while( my $hsp = $hit->next_hsp ) 
 			{
 			## $hsp is a Bio::Search::HSP::HSPI compliant object
-			if ( $hsp->percent_identity >= 98 ) 
+			if ( $hsp->percent_identity >= 98.5 ) 
 				{
-				my @cur_res_name = split(/[|]/, $hit->name);
-				@cur_res_name = split(/[~]/, $cur_res_name[1]);
-				my $hit_ratio = $hsp->length('hit') / $hit->length;
+				# my @cur_res_name = split(/[|]/, $hit->name);
+				# @cur_res_name = split(/[~]/, $cur_res_name[1]);
+				my @cur_res_name = split(/[~]/, $hit->name);
+                                my $hit_ratio = $hsp->length('hit') / $hit->length;
 				
 				if	($hit_ratio >= 0.95)
 					{

@@ -1,0 +1,271 @@
+<html>
+
+<head>
+		<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+		<title>Savvy Version 0.1</title>
+		<meta name="author" content="Malay, curiouser@ccmb.ap.nic.in">
+		<script language="JavaScript" src="scripts/browser.js"></script>
+
+<script language="JavaScript">
+	function makeimage(source){
+			img=new Image();
+			img.src=source;
+			return img;
+	}
+
+	var draw_plasmid 			= 	makeimage("images/draw0.png");
+	var draw_plasmid_over		=	makeimage("images/draw1.png");
+	
+	function imageOff(name){
+			document.images[name].src=eval(name).src;
+	}
+		
+	function imageOn(name){
+			document.images[name].src=eval(name+'_over').src;
+	}
+
+	function add_to_marker(){
+		var name	= 	document.form1.add_marker_name.value;
+		var start	= 	document.form1.add_marker_start.value;
+		var end		=	document.form1.add_marker_end.value;
+		var arrow	=   "";
+		
+		if(document.form1.add_marker_arrow.checked){
+			arrow	=	document.form1.add_marker_arrow.value;
+		}
+		else{
+			//alert("Inside arrow off");
+			arrow = "arrow_off";
+		}
+		
+		var style	=	document.form1.add_marker_style.options[document.form1.add_marker_style.selectedIndex].text;
+		var fill 	= document.form1.add_marker_fill.options[document.form1.add_marker_fill.selectedIndex].text;
+		var thickness = document.form1.add_marker_thickness.value;
+		
+		if( is_valid_position(start) &&	is_valid_position(end) ) {
+			var s  = document.form1.markers.value; 
+				s += name +" ";
+				s += start +" ";
+				s += end +" ";
+				s += arrow +" ";
+				s += style +" ";
+				s += fill +" ";
+				s += thickness +"\n";
+				
+			document.form1.markers.value = s;
+		} else {
+			show_alert("Invalid position!");
+		}
+	}
+
+	function is_valid_position(pos){
+		//alert("Inside is_valid");
+		if(document.form1.plasmid_size.value != ""){
+			var s = parseFloat(document.form1.plasmid_size.value);
+			var p = parseFloat(pos);
+			//alert(s);
+			//alert(pos);
+			if( (p > s) || (p < 0) ){
+				//alert("false");
+				return false;
+			}
+			else{
+				//alert("true");
+				return true;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	function show_alert(message){
+		alert("Savvy says, " +message);
+	}
+
+	function add_enzyme() {
+		var p = document.form1.add_enzyme_position.value;
+		if( is_valid_position(p)) {
+			var s 	 = 	document.form1.enzymes.value;
+				s	+=	document.form1.add_enzyme_name.value + " ";
+				s	+=	p + ";" ;
+				
+			document.form1.enzymes.value = s;
+			document.form1.add_enzyme_position.value = "";
+			document.form1.add_enzyme_name.value     = "";
+		} else {
+			show_alert("Invalid enzyme position!");
+		}
+	}
+
+	function add_mcs() {
+		//alert("Hi");
+		
+		var s = document.form1.mcs_start.value;
+		var e = document.form1.mcs_end.value;
+		var mcs = document.form1.mcs.value;
+		var array1 = new Array();
+		var out = "";
+		if(mcs != ""){
+			//alert("Within if loop");
+			array1 = mcs.split(",");
+		}
+		if (document.form1.mcs_enzyme.value != ""){
+		if( (s != "") || (e !="") ){
+			//alert("Within loop");
+			out += s;
+			for (var i=1; i<array1.length-1 ; i++){
+				out += ",";
+				out += array1[i];
+			}
+			out += ",";
+			out += document.form1.mcs_enzyme.value;
+			out += ",";
+			out += e;
+		} else {
+			show_alert("Supply valid start and end!");
+		}
+	
+		document.form1.mcs.value = out;
+		document.form1.mcs_enzyme.value ="";
+}
+	}
+
+	function submit_form(){
+	   //alert("Before submit");
+	   //document.forms[0].enctype="application/x-www-form-urlencoded";
+	   document.forms[0].submit();
+	}
+</script>
+</head>
+
+<body bgcolor="white" topmargin="0" leftmargin="0" marginheight="0" marginwidth="0" alink="red" vlink="red" link="#cc0000">
+
+<!-- TOP RED LINE-->
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<tr height="5">
+		<td bgcolor="#cc0000" height="10"><spacer type="block" width="1" height="10"></td>
+	</tr>
+</table>
+<!--END OF TOP RED LINE-->
+
+<!--MAIN BODY TABLE-->
+<table cellspacing="0" cellpadding="0" border="0">
+	<tr>
+		<td width="10" bgcolor="#cc0000" rowspan="99"><spacer type="block" width="10" height="5"></td>
+		<td valign="top" rowspan="99"><img width="57" height="50" src="images/redcorner.png" align="top"></td>
+		<td width="600" align="right">
+<table>
+	<tr>
+		<td width="360" align="left"><img width="354" height="74" src="images/savvydes.png" border="0"></td>
+		<td width="240" align="right"><img width="153" height="154" src="images/savvylogosmall.png" border="0"></td>
+	</tr>
+</table>
+		</td>
+	</tr> 
+	<tr>
+		<td>
+			<!--FORM TABLE-->
+			<table border="0" cellpadding="0" cellspacing="0" width="100%">
+				<tr>
+					<td align="center">
+						<table border="0" cellpadding="0" cellspacing="0" width="600">
+						<form name="form1" method="POST" enctype="application/x-www-form-urlencoded" target="_blank" action="/cgi-bin/savvy.cgi">
+							<tr>
+								<td colspan="2"><hr noshade size="1"></td>
+							</tr>
+							<tr>
+								<td width="300">
+									<font class="size2" style="color:#cc0000; font-weight:bold">Plasmid Name: </font>
+									<input type="text" name="plasmid_name" size="20">
+								</td>
+								<td width="300">
+									<font class="size2" style="color:#cc0000; font-weight:bold">Size (in base pairs): </font><input type="text" name="plasmid_size" size="10">
+								</td>
+							</tr>
+							<tr>
+								<td width="300"><font class="size2" style="color:#cc0000; font-weight:bold">Line Thickness: </font><input type="text" size="10" name="line_thickness" value="0.5"></td>
+								<td><font class="size2" style="color:#cc0000; font-weight:bold">Shape:  </font><input type="radio" checked name="shape" value="circular" > <font class="size2" style="color:#cc0000; font-weight:bold">Circular</font> <input type="radio" name="shape" value="linear" onClick="show_alert('I\'m sorry! I can\'t draw linear map yet! Ask Malay to update me, please...')"> <font class="size2" style="color:#cc0000; font-weight:bold">Linear</font>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2"><hr noshade size="1"></td>
+							</tr>
+							<tr>
+								<td colspan="2" class="size1"><font class="size2" style="color:#cc0000"><b>Markers:</b> </font><br><p><textarea name="markers" rows="5" cols="50"></textarea><p><span class="size1" style="color:#cc0000"><b>Name: </b></span><input type="text" name="add_marker_name" size="10"><span class="size1" style="color:#cc0000"><b>   Start: </b></span><input type="text" name="add_marker_start" size="10"><span class="size1" style="color:#cc0000">  <b>Finish: </b></span><input type="text" name="add_marker_end" size="10">  <input type="checkbox" checked name="add_marker_arrow" value="arrow_on"><span class="size1" style="color:#cc0000"> <b>Arrow on</b></span><p><span class="size1" style="color:#cc0000"><b>   Marker style:</b></span>
+							<select name="add_marker_style" size="1">
+								<option>Open</option>
+								<option selected>Filled</option>
+								</select>
+						<span class="size1" style="color:#cc0000"> <b>Fill-color:</b></span>
+						<select name="add_marker_fill" size="1">
+							<option>Aqua</option>
+							<option>Black</option>
+							<option>Blue</option>
+							<option>Fuschia</option>
+							<option>Gray</option>
+							<option>Green</option>
+							<option>Lime</option>
+							<option>Maroon</option>
+							<option>Navy</option>
+							<option>Olive</option>
+							<option>Purple</option>
+							<option selected>Red</option>
+							<option>Silver</option>
+							<option>Teal</option>
+							<option>Yellow</option>
+						</select>
+					<span class="size1" style="color:#cc0000"><b>Line Thickness: </b></span><input type="text" name="add_marker_thickness" size="5" value="12">
+					<p><input type="button" name="add_to_marker_list" value="Add to list" onClick="javascript:add_to_marker()">
+								</td>
+				</tr>
+				<tr>
+				<td colspan="2" class="size1"><hr noshade size="1">
+					<span class="size2" style="color:#cc0000"><b>Enzymes:</b></span><p>
+					<textarea name="enzymes" rows="2" cols="50"></textarea>
+					<p>
+					<span class="body" style="color:#cc0000"><b>Add enzyme in the proper order for correct positioning (I'll fix this bug in later release)</b></span><p>
+					<span style="color:#cc0000"><b>Name: </b></span><input type="text" name="add_enzyme_name" size="10">     <span style="color:#cc0000"><b>Position: </b></span><input type="text" name="add_enzyme_position" size="10">
+					<p><input type="button" name="add_to_enzyme_list" value="Add to list" onClick="add_enzyme()">
+				</td>
+				</tr>
+				<tr>
+				<td colspan="2" class="size1"><hr noshade size="1">
+				<span class="size2" style="color:#cc0000"><b>Multiple Cloning Site:</b></span><p>
+				<textarea name="mcs" rows="1" cols="50"></textarea>
+				<p><span style="color:#cc0000"><b>Start Position: </b></span><input type="text" name="mcs_start" size="10"> <span style="color:#cc0000"><b>End Position: </b></span><input type="text" name="mcs_end" size="10"> <span style="color:#cc0000"><b>Enzyme Name: </b></span><input type="text" name="mcs_enzyme" size="10"> 
+			<p><input type="button" name="add_to_mcs" value="Add to list" onClick="add_mcs()">
+			</td>
+				</tr>
+				<tr>
+				<td align="center" colspan="2"><hr noshade size="1">
+				<a href="" onMouseOver="imageOn('draw_plasmid')" onClick="javascript:submit_form();return false;" onMouseOut="imageOff('draw_plasmid')"><img name="draw_plasmid" border="0" width="209" height="28" src="images/draw0.png"></a></td>
+				</tr>
+				<tr height="20">
+				<td><spacer type="block" height="20" width="1"></td>
+				</tr>
+			</form>
+			</table>
+		</tr>
+</td>
+</table>
+		</td>
+	</tr>	
+	
+</table>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<tr height="1">
+		<td bgcolor="#cc0000"><spacer type="block" height="1" width="1"></td>
+	</tr>
+	<tr height="20">
+		<td><spacer type="block" height="20" width="1"></td>
+	</tr>
+	<tr> 
+       <td class="size1" align="center"><font color="#666666">Copyright</font><font color="#666666">&copy; 2001, Malay K Basu<br>
+                  <a href="mailto:curiouser@ccmb.ap.nic.in">curiouser@ccmb.ap.nic.in</a><br>
+                  </font>
+    </tr>
+</table>
+</body>
+</html>
+

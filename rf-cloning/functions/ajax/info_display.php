@@ -2,7 +2,7 @@
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -23,7 +23,7 @@ $login_status = "false";
 
 if(isset($_COOKIE['user_id']))
 	{
-	$user_info = mysql_fetch_assoc(mysql_query("SELECT * FROM users WHERE user_id='".$_COOKIE['user_id']."' ;"));
+	$user_info = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM users WHERE user_id='".$_COOKIE['user_id']."' ;"));
 	if ($user_info['session_check'] == $_COOKIE['session_check'])
 		{
 		$login_status = "true";
@@ -35,7 +35,7 @@ if ($login_status == "false")
 	exit;	
 	}
 
-$plasmid_obj = new Plasmid();
+$plasmid_obj = new Plasmid($conn);
 
 if(isset($_POST['id']))
 	{
@@ -65,7 +65,7 @@ else
     Name:<br />
     <input type='text' name='plasmid_name' id='plasmid_name' size="50" value=<?php echo "'".$plasmid_obj->get_parameters('plasmid_name')."' ".$clear; ?> /><br />
     Markers:<br />
-    <textarea name='markers' id='markers' rows=8 cols=90 style='font-size:9pt;' onchange='disable_save()'><?php echo $plasmid_obj->get_parameters("savvy_markers"); ?></textarea><br />
+    <textarea name='markers' id='markers' rows=8 cols=90 style="font-size:9pt;" onchange='disable_save()'><?php echo $plasmid_obj->get_parameters("savvy_markers"); ?></textarea><br />
         
     
     <table border="0" cellpadding="0" cellspacing="0">
@@ -127,7 +127,8 @@ else
 	Enzymes:<br />
 	<textarea name='enzymes' id='enzymes'rows=2 cols=90 style='font-size:9pt;' onchange='disable_save()'><?php echo $plasmid_obj->get_parameters('savvy_enzymes'); ?></textarea><br />
     <input type="button" onclick="	document.getElementById('enzymes').value = 'Digesting...';
-    								var $sequence = document.getElementById('plasmid_sequence').value;
+                                    var $sequence = document.getElementById('plasmid_sequence').value;
+                                    $call_numbered_triplets_plasmid.update('input=' + $sequence,'POST'); 
     								var $cut_num = document.getElementById('cut_num').value;
                                     var $params = 'sequence=' + $sequence + '&cut_num=' + $cut_num;
     								$restriction_digest.update($params,'POST')" value="digest"/>
@@ -141,7 +142,7 @@ else
     <b>Position: </b><input type="text" name="add_enzyme_position" id="add_enzyme_position" size="10" /> 
     <input type="button" name="add_to_enzyme_list" value="Add to list" onClick="add_enzyme()" /><br /><br />
 	Sequence:<br />
-	<textarea name='plasmid_sequence' id='plasmid_sequence' rows=8 cols=90 wrap='no' style='font-size:9pt;' onchange='disable_save()'></textarea><br />
+	<textarea name='plasmid_sequence' id='plasmid_sequence' rows=8 cols=90 wrap='no' style="font-size:9pt;  font-family:'Courier New', Courier, monospace" onchange='disable_save()'></textarea><br />
 	<input type='button' id='redraw' onclick='redrawing()' value='Redraw' />
 	<input type='button' id='save_edits' onclick="saveEdits()" value='Save' <?php echo $save_disable; ?>/>
     <?php echo $delete.$project_options; ?>

@@ -1,28 +1,35 @@
 // JavaScript Document
-/*-------------------------------------------------------
-COPYRIGHT (c) Steve Bond 2009-2014
-Distributed under the GNU general public license, version 3:
-http://www.gnu.org/licenses
-Web site: http://www.rf-cloning.com
-Author: Steve R. Bond, Ph.D <biologyguy@gmail.com>	
+/*************************************************************************************************#
+# www.rf-cloning.org
+#
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as published by
+# the Free Software Foundation <http://www.gnu.org/licenses/>
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 
-Plasmid maps are generated using a modified version of Savvy
-Web site: http://www.bioinformatics.org/savvy/
-Author: Malay Kumar Basu, PhD.
+# Plasmid maps are generated using a modified version of Savvy
+# Web site: http://www.bioinformatics.org/savvy/
+# Author: Malay Kumar Basu, PhD.
 	
-I grabbed a lot of the functionallity from 'Sequence 
-Massager' to manipulate nucleic acid primary sequences.
-http://www.attotron.com/cybertory/analysis/seqMassager.htm
+# I grabbed a lot of the functionallity from 'Sequence
+# Massager' to manipulate nucleic acid primary sequences.
+# http://www.attotron.com/cybertory/analysis/seqMassager.htm
               
-COPYRIGHT (c) 1998, 2006
-Attotron Biotechnologies Corporation
-Distributed under the GNU general public license:
-http://www.fsf.org/licensing/licenses/gpl.txt
+# COPYRIGHT (c) 1998, 2006
+# Attotron Biotechnologies Corporation
+# Distributed under the GNU general public license:
+# http://www.fsf.org/licensing/licenses/gpl.txt
 
-Web site: http://www.cybertory.org
-Author: Robert M. Horton, Ph.D <rmhorton@attotron.com>
-Funded by: NIH SBIR grant #R44 RR13645 02A2
---------------------------------------------------------*/
+# Web site: http://www.cybertory.org
+# Author: Robert M. Horton, Ph.D <rmhorton@attotron.com>
+# Funded by: NIH SBIR grant #R44 RR13645 02A2
+#*************************************************************************************************/
 // To reverse complement, run reverse() and complement() functions sequentially
 function reverse(aSeq) 
 	{

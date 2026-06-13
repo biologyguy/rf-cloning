@@ -2,7 +2,7 @@
 /*************************************************************************************************#
 # www.rf-cloning.org
 #
-# Copyright (C) 2009-2014 Steve R. Bond <biologyguy@gmail.com>
+# Copyright (C) Steve R. Bond <biologyguy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -13,7 +13,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #*************************************************************************************************/
-function savvy_output($backbone_id, $insert_name, $insert_sequence, $first_insert, $second_insert, $orientation, $arrow, $database)
+function savvy_output($conn, $backbone_id, $insert_name, $insert_sequence, $first_insert, $second_insert, $orientation, $arrow, $database)
 {
 
 $id_field_name = "plasmid_id" ;
@@ -32,7 +32,7 @@ if ($backbone_id == "blank" || $backbone_id == 0)
 
 else
 	{
-	$plasmid_data_array =	mysql_fetch_assoc(mysql_query("SELECT * FROM ".$database." WHERE ".$id_field_name." = '".$backbone_id."' ;"));
+	$plasmid_data_array =	mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM ".$database." WHERE ".$id_field_name." = '".$backbone_id."' ;"));
 	}
 //*******************************************************************************************************************************************//
 //This page shows the results when the insert is added																						 //	
@@ -46,17 +46,17 @@ else
 	//make sure that all \n characters and \r\r are changed to \r before exploding
 	$marker_data = str_replace("\n","\r",$plasmid_data_array['savvy_markers']);
 	$marker_data = str_replace("\r\r","\r",$marker_data);
+	$marker_data = trim($marker_data);
 
 	$marker_row_array = explode("\r",$marker_data);
 	
 	$new_markers_output = "";
 	
-
 //Add in all the saved markers
 	while ($row = array_shift($marker_row_array))
 		{
-		$markers_array = explode(" ",$row);	
-		
+		$markers_array = explode(" ", $row);
+
 		if ((max($markers_array[1],$markers_array[2])) < (min($second_insert,$first_insert)))
 			{
 			foreach($markers_array as $a)
@@ -93,12 +93,13 @@ else
 			
 		elseif ((min($markers_array[1],$markers_array[2])) > (max($second_insert,$first_insert)))
 			{
-			$new_markers_output .= $markers_array[0]." ".($markers_array[1] + $bps_shifted)." ".($markers_array[2] + $bps_shifted)." ".$markers_array[3]." ".$markers_array[4]." ".$markers_array[5]." ".$markers_array[6]."\r";
+			$new_markers_output .= $markers_array[0]." ".($markers_array[1] + $bps_shifted)." ".($markers_array[2] + $bps_shifted);
+			$new_markers_output .= " ".implode(" ", array_slice($markers_array, 3))."\r";
 			continue;
 			}
 		}
 		
-	//Put in the insert at the very end. It's not the prettiest, but it's the easiest. 	
+	//Put in the insert 	
 	if ($orientation == "ccw")
 		{
 		$pos1 = $first_insert + $insert_size;	
@@ -110,6 +111,45 @@ else
 		$pos2 = $first_insert + $insert_size;
 		}
 	$new_markers_output .= $insert_name." ".$pos1." ".$pos2." arrow_".$arrow." Filled Red 12";
+
+	//sort all of the markers
+	$marker_row_array = explode("\r",$new_markers_output);
+	$multiD_markers = array();
+	
+	foreach($marker_row_array as $next)
+		{
+		array_push($multiD_markers,explode(" ",$next));
+		}	
+	
+	$new_markers_output = "";
+	
+	function aasort (&$array, $key1, $key2) 
+		{
+	    $sorter=array();
+	    $ret=array();
+	    reset($array);
+	    foreach ($array as $ii => $va) 
+	    	{
+	        $sorter[$ii]=min($va[$key1],$va[$key2]);
+	    	}
+	    asort($sorter);
+	    foreach ($sorter as $ii => $va) 
+	    	{
+	        $ret[$ii]=$array[$ii];
+	    	}
+	    $array=$ret;
+		}
+	
+	aasort($multiD_markers,1,2);
+	
+	foreach($multiD_markers as $row)
+		{
+		foreach($row as $next)
+			{	
+			$new_markers_output .= $next." ";	
+			}
+		$new_markers_output .= "\r";
+		}
 
 //Next, parse the enzymes data, and shift them around as needed
 $enzymes_array = explode(":",$plasmid_data_array['savvy_enzymes']);

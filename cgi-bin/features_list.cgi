@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -wT
 use CGI qw(:standard);
 use CGI::Carp qw( fatalsToBrowser );
 use strict;
@@ -17,7 +17,7 @@ print
 	<body>";
 
 print "<p>The core of these sequences was obtained from <a href='http://www.addgene.org/plfeatures.html'>AddGene</a>, who obtained a portion of their sequences from the <a href='http://wishart.biology.ualberta.ca/PlasMapper/'>PlasMapper</a> website (See Xiaoli Dong, Paul Stothard, Ian J. Forsythe, and David S. Wishart, PlasMapper: a web server for drawing and auto-annotating plasmid maps, Nucleic Acids Res. 2004 Jul 1;32(Web Server issue):W660-4.) </p>
-		<p>If you have any suggested additions/corrections please <a href='mailto:admin\@rf-cloning.org'>let me know!!</a></p>";	
+		<p>If you have any suggested additions or corrections, please <a href='mailto:biologyguy\@gmail.com'>let me know!!</a></p>";
 	
 foreach (@sequences)
 	{
